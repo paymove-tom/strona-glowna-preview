@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paymove: płatności online, QR i z agentem AI</title>
+<style>
+@font-face{font-family:"Inter";src:url("assets/fonts/Inter-var.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Aeonik";src:url("assets/fonts/Aeonik-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Aeonik";src:url("assets/fonts/Aeonik-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Aeonik";src:url("assets/fonts/Aeonik-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+
+:root{
+  --ink:#0A0A0B; --ink-2:#6B6B70; --ink-3:#8A8A8E;
+  --bg:#FFFFFF; --card:#F4F4F4; --stage:#F7F7F7;
+  --line:rgba(10,10,11,.08);
+  --ok:#16A34A;
+  --shadow:0 2px 4px rgba(10,10,11,.04),0 12px 24px rgba(10,10,11,.06);
+  --shadow-lg:0 2px 6px rgba(10,10,11,.05),0 24px 48px rgba(31,41,82,.12);
+  --s4:4px;--s8:8px;--s12:12px;--s16:16px;--s24:24px;--s32:32px;--s48:48px;--s64:64px;--s96:96px;--s120:120px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden}
+body{font-family:"Inter",system-ui,sans-serif;font-weight:500;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+img{display:block}
+a{color:inherit;text-decoration:none}
+.container{max-width:1240px;margin:0 auto}
+.h1{font-size:64px;line-height:64px;letter-spacing:-.06em;font-weight:500}
+.lead{font-size:16px;line-height:19.2px;letter-spacing:-.02em;color:var(--ink-2)}
+.pill{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 24px;border-radius:999px;font-size:16px;letter-spacing:-.02em;font-weight:500;transition:transform .2s,background .2s}
+.pill:hover{transform:translateY(-1px)}
+.pill--dark{background:var(--ink);color:#fff}
+.pill--light{background:var(--card);color:var(--ink)}
+.pill--sm{height:40px;padding:0 16px;font-size:14px}
+.pill img{width:16px;height:16px}
+.m-only{display:none}
+
+/* NAV */
+.nav{border-bottom:1px solid var(--line);background:#fff}
+.nav__in{height:80px;display:flex;align-items:center;gap:24px;padding:0 100px;max-width:1440px;margin:0 auto}
+.nav__logo img{width:114px;height:20px}
+.nav__sep{width:1px;height:20px;background:var(--line)}
+.nav__links{display:flex;gap:24px;font-size:14px;letter-spacing:-.02em}
+.nav__links a:hover{color:var(--ink-2)}
+.nav__right{margin-left:auto;display:flex;align-items:center;gap:24px;font-size:14px}
+.nav__burger{display:none;width:40px;height:40px;border-radius:999px;background:var(--card);align-items:center;justify-content:center}
+.nav__burger span{display:block;width:16px;height:1.5px;background:var(--ink);box-shadow:0 5px 0 var(--ink),0 -5px 0 var(--ink)}
+
+/* HERO */
+#hero{padding:96px 100px 96px}
+.hero__text{text-align:center;display:flex;flex-direction:column;align-items:center}
+.hero__h1 .l{display:block;white-space:nowrap}
+.logos-inline{display:inline-flex;vertical-align:middle;margin:-12px 16px 0 0;position:relative;top:-4px}
+.logos-inline span{width:64px;height:56px;border-radius:16px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;margin-left:-12px}
+.logos-inline span:first-child{margin-left:0;transform:rotate(-8deg)}
+.logos-inline span:nth-child(2){transform:translateY(-6px);z-index:2}
+.logos-inline span:nth-child(3){transform:rotate(8deg)}
+.logos-inline img{max-width:40px;max-height:22px}
+.hero__lead{margin-top:24px;max-width:454px}
+.hero__cta{margin-top:48px;display:flex;gap:8px}
+
+/* SCENE */
+.scene{margin-top:64px;background:var(--stage);border-radius:32px;padding:24px;border:1px solid var(--line)}
+.canvas{position:relative;height:720px;border-radius:24px;overflow:hidden;
+  background:
+    radial-gradient(60% 70% at 8% 10%,#BFDDFB 0%,rgba(191,221,251,0) 70%),
+    radial-gradient(55% 65% at 95% 95%,#D8C8FB 0%,rgba(216,200,251,0) 70%),
+    radial-gradient(40% 50% at 70% 10%,#E6EEFF 0%,rgba(230,238,255,0) 70%),
+    #F5F6FA}
+.canvas::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(10,10,11,.07) 1px,transparent 1px);background-size:24px 24px;mask-image:radial-gradient(70% 70% at 50% 40%,#000,transparent)}
+.chip-ex{position:absolute;top:16px;right:16px;z-index:9;font-size:12px;line-height:14.4px;letter-spacing:-.02em;color:var(--ink-2);background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:999px;padding:4px 12px;backdrop-filter:blur(12px)}
+.ui{font-family:"Aeonik","Inter",sans-serif}
+
+/* browser + checkout */
+.browser{position:absolute;left:300px;top:48px;width:600px;height:720px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.9);border-radius:16px;box-shadow:var(--shadow-lg);backdrop-filter:blur(24px);overflow:hidden;z-index:2}
+.browser__bar{height:44px;display:flex;align-items:center;padding:0 16px;gap:8px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.8)}
+.dot{width:10px;height:10px;border-radius:50%}
+.browser__url{margin:0 auto;display:flex;align-items:center;gap:8px;height:28px;padding:0 16px;border-radius:8px;background:rgba(10,10,11,.05);font-size:12px;color:var(--ink-2);letter-spacing:-.01em;transform:translateX(-24px)}
+.browser__url img{width:12px;height:12px;opacity:.6}
+.browser__body{padding:48px 0 0;display:flex;justify-content:center}
+.co{width:340px;background:#fff;border-radius:20px;border:1px solid var(--line);box-shadow:var(--shadow);padding:24px}
+.co__lab{font-size:14px;color:var(--ink-2)}
+.co__amt{font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.03em;margin-top:4px}
+.co__amt small{font-size:20px;font-weight:500}
+.co__merch{margin-top:16px;display:flex;gap:12px;align-items:center;background:#F2F3F7;border-radius:12px;padding:12px}
+.co__merch img{width:36px;height:36px;border-radius:10px;object-fit:cover}
+.co__merch p{font-size:13px;color:var(--ink-2);line-height:16px}
+.co__merch b{display:block;font-size:14px;color:var(--ink);font-weight:500}
+.co__methods{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.co__methods span{height:44px;border-radius:10px;border:1px solid #ECECEF;background:#fff;display:flex;align-items:center;justify-content:center}
+.co__methods span.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.co__methods img{max-height:20px;max-width:56px}
+.co__blik{margin-top:16px;font-size:13px;color:var(--ink-2)}
+.co__code{margin-top:8px;display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.co__code span{height:48px;border-radius:12px;background:#F2F3F7;border:1px solid #ECECEF;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500}
+.co__code span.f{border-color:var(--ink)}
+.co__pay{margin-top:16px;height:52px;border-radius:999px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500}
+.co__by{margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--ink-3)}
+.co__by img.lg{width:57px;height:10px}
+.co__by img.lk{width:11px;height:11px;opacity:.5}
+
+/* QR */
+.qr{position:absolute;left:28px;top:300px;width:168px;padding:16px;background:#fff;border-radius:20px;border:1px solid var(--line);box-shadow:var(--shadow-lg);transform:rotate(-4deg);z-index:3;text-align:center}
+.qr svg{width:136px;height:136px;display:block}
+.qr__t{margin-top:12px;font-size:14px;font-weight:700;letter-spacing:-.02em}
+.qr__s{margin-top:2px;font-size:12px;color:var(--ink-2)}
+.qr__brand{margin:12px auto 0;width:57px;height:10px}
+
+/* phone */
+.phone{position:absolute;left:180px;top:110px;width:250px;height:530px;border-radius:44px;background:#E9EAEE;padding:8px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 2px 6px rgba(10,10,11,.08),0 32px 64px rgba(31,41,82,.22);z-index:4}
+.phone__s{height:100%;border-radius:36px;background:#F2F3F7;overflow:hidden;display:flex;flex-direction:column;padding:24px 16px 16px;position:relative}
+.phone__s::before{content:"";position:absolute;inset:0 0 auto;height:220px;background:radial-gradient(80% 100% at 50% 0%,rgba(74,222,128,.28),rgba(74,222,128,0))}
+.ph__merch{position:relative;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
+.ph__merch img{width:28px;height:28px;border-radius:8px;object-fit:cover}
+.ph__ok{position:relative;margin-top:32px;width:48px;height:48px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(22,163,74,.3)}
+.ph__t{position:relative;margin-top:16px;font-size:32px;line-height:34px;font-weight:700;letter-spacing:-.04em}
+.ph__a{position:relative;margin-top:4px;font-size:20px;line-height:28px;font-weight:500}
+.ph__rows{position:relative;margin-top:24px;background:rgba(255,255,255,.75);border:1px solid #fff;border-radius:20px;padding:4px 14px;box-shadow:0 8px 24px rgba(31,41,82,.08)}
+.ph__rows div{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:12px 0;color:var(--ink-2)}
+.ph__rows div+div{border-top:1px solid rgba(0,0,0,.06)}
+.ph__rows b{color:var(--ink);font-weight:500;display:flex;align-items:center}
+.ph__rows img{height:12px}
+.ph__cta{margin-top:auto;height:48px;border-radius:999px;background:#1A1A1A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
+
+/* agent chat */
+.chat{position:absolute;left:860px;top:88px;width:310px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.95);border-radius:24px;box-shadow:var(--shadow-lg);backdrop-filter:blur(24px);padding:16px;z-index:5}
+.chat__h{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
+.chat__h img{width:24px;height:24px;padding:4px;background:#fff;border-radius:8px;border:1px solid var(--line)}
+.chat__h span{margin-left:auto;font-size:12px;color:var(--ink-3)}
+.bub-u{margin:16px 0 0 auto;width:max-content;max-width:230px;background:#1A1A1A;color:#fff;border-radius:18px 18px 4px 18px;padding:10px 14px;font-size:14px;line-height:18px}
+.bub-a{margin-top:12px;font-size:14px;line-height:18px;color:var(--ink)}
+.cart{margin-top:12px;background:#fff;border:1px solid #ECECEF;border-radius:16px;padding:12px;display:flex;gap:12px;align-items:center}
+.cart img{width:44px;height:44px;border-radius:12px;object-fit:cover}
+.cart p{font-size:14px;line-height:18px}
+.cart p span{display:block;font-size:13px;color:var(--ink-2)}
+.cart b{margin-left:auto;font-size:14px;font-weight:700}
+.chat__cta{margin-top:12px;height:44px;border-radius:999px;background:#1A1A1A;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px}
+.chat__cta img{height:14px}
+
+/* bank confirm */
+.bank{position:absolute;left:830px;top:456px;width:320px;background:#fff;border-radius:24px;border:1px solid var(--line);box-shadow:0 2px 6px rgba(10,10,11,.06),0 28px 56px rgba(31,41,82,.18);padding:16px;z-index:6}
+.bank__top{display:flex;align-items:center;gap:12px}
+.bank__ico{width:44px;height:44px;border-radius:12px;background:#0A0A0B;display:flex;align-items:center;justify-content:center}
+.bank__ico img{width:28px}
+.bank__top p{font-size:14px;line-height:18px;font-weight:500}
+.bank__top p span{display:block;font-size:13px;color:var(--ink-2);font-weight:400}
+.spin{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid #E4E4E7;border-top-color:var(--ink);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.bank__note{margin-top:12px;padding:10px 12px;border-radius:12px;background:#F2F3F7;font-size:12px;line-height:16px;color:var(--ink-2)}
+
+/* clients */
+.clients{margin-top:48px;text-align:center}
+.clients p{font-size:14px;line-height:16.8px;letter-spacing:-.02em;color:var(--ink-3)}
+.clients__row{margin-top:24px;display:flex;justify-content:space-between;align-items:center;gap:32px}
+.clients__row img{height:28px;width:auto;max-width:112px;filter:grayscale(1);opacity:.55;transition:opacity .2s}
+.clients__row img:hover{opacity:1}
+
+/* 390 */
+@media (max-width:720px){
+  .d-only{display:none!important}
+  .m-only{display:inline}
+  .nav__in{padding:0 16px;height:64px}
+  .nav__sep,.nav__links,.nav__right .login{display:none}
+  .nav__right{gap:8px}
+  .nav__burger{display:flex}
+  #hero{padding:48px 16px 64px}
+  .h1{font-size:40px;line-height:40px}
+  .hero__h1 .l{white-space:normal}
+  .hero__lead{margin-top:16px;max-width:320px}
+  .hero__cta{margin-top:32px;flex-direction:column;width:100%}
+  .hero__cta .pill{justify-content:center}
+  .scene{margin-top:48px;padding:12px;border-radius:24px}
+  .canvas{height:auto;display:flex;flex-direction:column;gap:16px;padding:48px 12px 16px;border-radius:16px}
+  .browser,.qr,.phone,.chat,.bank{position:relative;left:auto;top:auto;transform:none}
+  .browser{width:100%;height:auto}
+  .browser__url{transform:none}
+  .browser__body{padding:16px}
+  .co{width:100%;padding:16px}
+  .qr{width:100%;display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:center;text-align:left}
+  .qr svg{width:96px;height:96px}
+  .qr__t{margin-top:0}
+  .qr__brand{margin:8px 0 0}
+  .phone{width:250px;margin:0 auto}
+  .chat{width:100%}
+  .bank{width:100%;margin-top:-32px}
+  .clients__row{flex-wrap:wrap;justify-content:center;gap:24px 32px}
+  .clients__row img{height:22px}
+}
+
+/* poprawki techniczne executora (siatka 4/8, krawędzie, 1280) */
+.qr__t{line-height:18px}.qr__s{line-height:16px;margin-top:4px}.bub-u{box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.co__code{gap:8px}.co__by{gap:8px}
+.ph__rows{padding:4px 16px}
+.bub-u{padding:12px 16px}.bank__note{padding:12px}
+.co__merch,.co__pay,.phone__s,.ph__cta,.chat__cta,.bank__note{box-shadow:inset 0 0 0 1px rgba(10,10,11,.08)}
+.canvas{box-shadow:inset 0 0 0 1px rgba(10,10,11,.06)}
+.logos-inline img{width:auto;height:22px;max-width:44px;max-height:none;object-fit:contain}
+@media (min-width:721px) and (max-width:1439px){#hero{padding-left:max(16px,calc((100vw - 1240px)/2));padding-right:max(16px,calc((100vw - 1240px)/2))}}
+@media (min-width:721px) and (max-width:1271px){#hero .scene{zoom:.8}}
+
+.hero__h1 .l.m-only{display:none}
+.ph__rows div{gap:8px;align-items:flex-start}
+.ph__rows div b{text-align:right;justify-content:flex-end;min-width:0}
+@media (max-width:720px){.hero__h1 .l.m-only{display:block}.hero__h1 .l.d-only{display:none}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav__in">
+    <a class="nav__logo" href="./" aria-label="Paymove"><img src="assets/logos/logo_paymove_ink.svg" alt="Paymove"></a>
+    <span class="nav__sep"></span>
+    <nav class="nav__links">
+      <a href="#online">Produkty</a>
+      <a href="#agent">Płatności agentyczne</a>
+      <a href="#start">Developers</a>
+      <a href="#start">Cennik</a>
+      <a href="./">Blog</a>
+    </nav>
+    <div class="nav__right">
+      <a class="login" href="./">Zaloguj się</a>
+      <a class="pill pill--dark pill--sm" href="./">Zacznij za darmo</a>
+      <button class="nav__burger" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="hero">
+  <div class="container">
+    <div class="hero__text">
+      <h1 class="h1 hero__h1">
+        <span class="l d-only">Płatności online, QR</span>
+        <span class="l m-only">Płatności<br>online, QR</span>
+        <span class="l"><span class="logos-inline d-only" aria-label="BLIK, Apple Pay, Google Pay"><span><img src="assets/logos/blik-logo.svg" alt="BLIK"></span><span><img src="assets/logos/applepay-logo.svg" alt="Apple Pay"></span><span><img src="assets/logos/googlepay-logo.svg" alt="Google Pay"></span></span>i z agentem AI.</span>
+      </h1>
+      <p class="lead hero__lead">
+        <span class="d-only">BLIK, karty i portfele w sklepie, w kodzie QR<br>i u agenta AI. Sandbox od razu.</span>
+        <span class="m-only">BLIK i karty w sklepie,<br>w kodzie QR i u agenta AI.</span>
+      </p>
+      <div class="hero__cta">
+        <a class="pill pill--dark" href="./">Zacznij za darmo</a>
+        <a class="pill pill--light" href="#start">Zobacz cennik <img src="assets/icons/arrow-right-line.svg" alt=""></a>
+      </div>
+    </div>
+
+    <div class="scene" aria-label="Płatność online, kodem QR i z agentem AI">
+      <div class="canvas ui">
+        <span class="chip-ex">Przykład</span>
+
+        <!-- 1. ONLINE -->
+        <div class="browser">
+          <div class="browser__bar">
+            <i class="dot" style="background:#FF5F57"></i><i class="dot" style="background:#FEBC2E"></i><i class="dot" style="background:#28C840"></i>
+            <span class="browser__url"><img src="assets/icons/lock-line.svg" alt="">pay.paymove.io</span>
+          </div>
+          <div class="browser__body">
+            <div class="co">
+              <p class="co__lab">Do zapłaty</p>
+              <p class="co__amt">240,40 <small>zł</small></p>
+              <div class="co__merch"><img src="assets/img/recepcja.jpg" alt=""><p>Płatność dla<b>Sklep demo</b></p></div>
+              <div class="co__methods">
+                <span class="on"><img src="assets/logos/blik-logo.svg" alt="BLIK"></span>
+                <span><img src="assets/logos/applepay-logo.svg" alt="Apple Pay"></span>
+                <span><img src="assets/logos/googlepay-logo.svg" alt="Google Pay"></span>
+              </div>
+              <p class="co__blik">Kod BLIK</p>
+              <div class="co__code"><span>7</span><span>7</span><span>7</span><span>1</span><span>2</span><span class="f">3</span></div>
+              <div class="co__pay">Zapłać · 240,40 zł</div>
+              <p class="co__by"><img class="lk" src="assets/icons/lock-line.svg" alt="">Płatność obsługiwana przez <img class="lg" src="assets/logos/logo_paymove_ink.svg" alt="Paymove"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. QR -->
+        <div class="qr">
+          <svg viewBox="-2 -2 25 25" aria-label="Kod QR">
+            <rect x="-2" y="-2" width="25" height="25" fill="#fff"/>
+            <g fill="#0A0A0B">
+              <path fill-rule="evenodd" d="M0 0h7v7h-7zM1 1v5h5v-5zM2 2h3v3h-3z"/>
+              <path fill-rule="evenodd" d="M14 0h7v7h-7zM15 1v5h5v-5zM16 2h3v3h-3z"/>
+              <path fill-rule="evenodd" d="M0 14h7v7h-7zM1 15v5h5v-5zM2 16h3v3h-3z"/>
+              <path d="M8 0h1v1h-1zM10 0h2v1h-2zM9 1h2v1h-2zM12 1h1v1h-1zM8 2h2v1h-2zM11 2h1v1h-1zM10 3h3v1h-3zM8 4h1v1h-1zM10 4h1v1h-1zM9 5h1v1h-1zM11 5h2v1h-2zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM8 7h2v1h-2zM11 7h2v1h-2zM0 8h1v1h-1zM2 8h2v1h-2zM5 8h3v1h-3zM10 8h1v1h-1zM12 8h2v1h-2zM15 8h3v1h-3zM19 8h1v1h-1zM1 9h1v1h-1zM4 9h2v1h-2zM8 9h2v1h-2zM11 9h1v1h-1zM14 9h1v1h-1zM16 9h1v1h-1zM18 9h2v1h-2zM0 10h3v1h-3zM4 10h1v1h-1zM6 10h3v1h-3zM10 10h3v1h-3zM15 10h1v1h-1zM17 10h1v1h-1zM19 10h2v1h-2zM2 11h2v1h-2zM5 11h1v1h-1zM9 11h2v1h-2zM12 11h3v1h-3zM16 11h1v1h-1zM19 11h1v1h-1zM0 12h2v1h-2zM3 12h2v1h-2zM6 12h1v1h-1zM8 12h1v1h-1zM11 12h1v1h-1zM13 12h1v1h-1zM15 12h4v1h-4zM20 12h1v1h-1zM8 13h1v1h-1zM10 13h2v1h-2zM13 13h1v1h-1zM16 13h1v1h-1zM18 13h2v1h-2zM9 14h2v1h-2zM12 14h1v1h-1zM14 14h1v1h-1zM16 14h2v1h-2zM20 14h1v1h-1zM8 15h1v1h-1zM10 15h2v1h-2zM14 15h2v1h-2zM17 15h3v1h-3zM9 16h1v1h-1zM11 16h3v1h-3zM16 16h1v1h-1zM18 16h1v1h-1zM20 16h1v1h-1zM8 17h3v1h-3zM13 17h3v1h-3zM18 17h2v1h-2zM10 18h2v1h-2zM13 18h1v1h-1zM15 18h3v1h-3zM19 18h2v1h-2zM8 19h2v1h-2zM11 19h1v1h-1zM14 19h1v1h-1zM16 19h1v1h-1zM18 19h1v1h-1zM9 20h2v1h-2zM12 20h2v1h-2zM15 20h1v1h-1zM17 20h2v1h-2zM20 20h1v1h-1z"/>
+            </g>
+          </svg>
+          <div>
+            <p class="qr__t">Zeskanuj i zapłać</p>
+            <p class="qr__s">Kawiarnia demo</p>
+            <img class="qr__brand" src="assets/logos/logo_paymove_ink.svg" alt="Paymove">
+          </div>
+        </div>
+
+        <div class="phone">
+          <div class="phone__s">
+            <div class="ph__merch"><img src="assets/img/kawiarnia.jpg" alt="">Kawiarnia demo</div>
+            <div class="ph__ok"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+            <p class="ph__t">Zapłacono</p>
+            <p class="ph__a">32,00 zł</p>
+            <div class="ph__rows">
+              <div>Metoda <b><img src="assets/logos/blik-logo.svg" alt="BLIK"></b></div>
+              <div>Potwierdzenie <b>W aplikacji banku</b></div>
+            </div>
+            <div class="ph__cta">Gotowe</div>
+          </div>
+        </div>
+
+        <!-- 3. AGENT -->
+        <div class="chat">
+          <div class="chat__h"><img src="assets/ai/claude-color.svg" alt="Claude">Claude <span>przez Paymove MCP</span></div>
+          <p class="bub-u">Kup 2 bilety do zoo na sobotę</p>
+          <p class="bub-a">Przygotowałem płatność. Zatwierdzasz ją w aplikacji banku.</p>
+          <div class="cart"><img src="assets/img/zoo-rodzina.jpg" alt=""><p>2 bilety normalne<span>Zoo demo · sobota</span></p><b>86,00 zł</b></div>
+          <div class="chat__cta">Zapłać <img src="assets/logos/blik-wordmark-white.svg" alt="BLIK"></div>
+        </div>
+
+        <div class="bank">
+          <div class="bank__top">
+            <span class="bank__ico"><img src="assets/logos/blik-wordmark-white.svg" alt="BLIK"></span>
+            <p>Potwierdź w aplikacji banku<span>BLIK · 86,00 zł</span></p>
+            <i class="spin" aria-hidden="true"></i>
+          </div>
+          <p class="bank__note">Agent nie płaci sam. Płatność zatwierdzasz Ty.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="clients">
+      <p>Sprzedają z Paymove.</p>
+      <div class="clients__row">
+        <img src="assets/clients-crop/zoo-gdansk.svg" alt="Zoo Gdańsk">
+        <img src="assets/clients-crop/lotnisko-gdansk.svg" alt="Lotnisko Gdańsk">
+        <img src="assets/clients-crop/pkp-mobility.svg" alt="PKP Mobility">
+        <img src="assets/clients-crop/polin.svg" alt="POLIN">
+        <img src="assets/clients-crop/sun-snow.svg" alt="Sun &amp; Snow">
+        <img src="assets/clients-crop/sunbay.svg" alt="Sunbay">
+        <img src="assets/clients-crop/wielka-fabryka-elfow.svg" alt="Wielka Fabryka Elfów">
+        <img src="assets/clients-crop/pewny-lokal.svg" alt="Pewny Lokal">
+        <img src="assets/clients-crop/mizzox.svg" alt="Mizzox">
+        <img src="assets/clients-crop/legal-geek.svg" alt="Legal Geek">
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<style>
+#online{padding:120px 100px;background:#fff}
+#online .on__in{max-width:1240px;margin:0 auto;position:relative}
+#online .on__r{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+#online .on__grid{display:grid;grid-template-columns:5fr 7fr;gap:48px;align-items:center}
+
+/* tekst */
+#online .on__h2{font-size:48px;line-height:48px;letter-spacing:-.06em;font-weight:500;color:var(--ink)}
+#online .on__h2 span{display:block;white-space:nowrap}
+#online .on__h2 .g{color:var(--ink-3)}
+#online .on__lead{margin-top:16px;max-width:400px;font-size:16px;line-height:19.2px;letter-spacing:-.02em;color:var(--ink-2)}
+#online .on__m{display:none}
+#online .on__tabs{margin-top:48px;display:flex;flex-direction:column;gap:4px;max-width:400px}
+#online .on__tab{display:flex;gap:16px;align-items:flex-start;padding:16px;border-radius:16px;cursor:pointer;border:1px solid transparent;transition:background .2s,border-color .2s}
+#online .on__tab:hover{background:rgba(10,10,11,.03)}
+#online .on__ico{flex:none;width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+#online .on__ico img{width:20px;height:20px}
+#online .on__tt{display:block;font-size:16px;line-height:19.2px;letter-spacing:-.02em;color:var(--ink-2);padding-top:0}
+#online .on__td{display:block;margin-top:4px;font-size:14px;line-height:16.8px;letter-spacing:-.02em;font-weight:400;color:var(--ink-2);max-height:0;overflow:hidden;opacity:0;transition:max-height .3s,opacity .3s}
+#online .on__tab .on__tw{padding-top:2px}
+#online .on__cta{margin-top:32px}
+#online .on__cta img{width:16px;height:16px}
+
+/* aktywna zakładka */
+#online #on-w:checked ~ .on__grid label[for=on-w],
+#online #on-c:checked ~ .on__grid label[for=on-c],
+#online #on-l:checked ~ .on__grid label[for=on-l]{background:var(--card);border-color:var(--line)}
+#online #on-w:checked ~ .on__grid label[for=on-w] .on__tt,
+#online #on-c:checked ~ .on__grid label[for=on-c] .on__tt,
+#online #on-l:checked ~ .on__grid label[for=on-l] .on__tt{color:var(--ink)}
+#online #on-w:checked ~ .on__grid label[for=on-w] .on__td,
+#online #on-c:checked ~ .on__grid label[for=on-c] .on__td,
+#online #on-l:checked ~ .on__grid label[for=on-l] .on__td{max-height:40px;opacity:1}
+#online #on-w:focus-visible ~ .on__grid label[for=on-w],
+#online #on-c:focus-visible ~ .on__grid label[for=on-c],
+#online #on-l:focus-visible ~ .on__grid label[for=on-l]{outline:2px solid var(--ink);outline-offset:2px}
+
+/* scena */
+#online .on__scene{position:relative;height:600px;border-radius:32px;overflow:hidden;
+  background:
+    radial-gradient(70% 70% at 0% 0%,#CDBDFB 0%,rgba(205,189,251,0) 70%),
+    radial-gradient(60% 70% at 0% 100%,#A9E8D4 0%,rgba(169,232,212,0) 70%),
+    radial-gradient(70% 80% at 100% 30%,#93B6F6 0%,rgba(147,182,246,0) 70%),
+    #EEF1FA;
+  box-shadow:inset 0 0 0 1px rgba(10,10,11,.06)}
+#online .on__scene::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(10,10,11,.06) 1px,transparent 1px);background-size:24px 24px;mask-image:radial-gradient(70% 70% at 40% 40%,#000,transparent);-webkit-mask-image:radial-gradient(70% 70% at 40% 40%,#000,transparent)}
+#online .on__chip{position:absolute;top:16px;right:16px;z-index:9;font-size:12px;line-height:14.4px;letter-spacing:-.02em;color:var(--ink-2);background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:999px;padding:4px 12px;backdrop-filter:blur(12px)}
+#online .ui{font-family:"Aeonik","Inter",sans-serif;letter-spacing:0}
+
+/* przeglądarka */
+#online .on__br{position:absolute;left:48px;top:64px;width:720px;height:600px;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.9);border-radius:16px;box-shadow:var(--shadow-lg);backdrop-filter:blur(24px);overflow:hidden;z-index:2;transition:filter .3s,opacity .3s,transform .3s}
+#online .on__bar{height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.8)}
+#online .on__dot{width:10px;height:10px;border-radius:50%}
+#online .on__url{position:relative;margin-left:96px;height:28px;min-width:200px}
+#online .on__url span{position:absolute;inset:0;display:flex;align-items:center;gap:8px;padding:0 16px;border-radius:8px;background:rgba(10,10,11,.05);font-size:12px;color:var(--ink-2);white-space:nowrap;transition:opacity .3s}
+#online .on__url img{width:12px;height:12px;opacity:.6}
+#online .on__url .u2{opacity:0}
+#online .on__pg{position:absolute;left:0;right:0;top:44px;bottom:0;padding:24px;transition:opacity .3s}
+#online .on__co{opacity:0;visibility:hidden}
+
+/* sklep */
+#online .on__nav{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--ink)}
+#online .on__nav img.m{width:24px;height:24px;border-radius:8px;object-fit:cover}
+#online .on__nav .lk{margin-left:24px;display:flex;gap:16px;color:var(--ink-2);font-weight:400}
+#online .on__nav .bag{margin-left:auto;margin-right:96px;width:32px;height:32px;border-radius:999px;background:#F2F3F7;display:flex;align-items:center;justify-content:center}
+#online .on__nav .bag img{width:16px;height:16px}
+#online .on__photo{margin-top:16px;width:100%;height:208px;border-radius:16px;object-fit:cover;box-shadow:inset 0 0 0 1px var(--line)}
+#online .on__prod{margin-top:16px;max-width:296px}
+#online .on__prod h4{font-size:24px;line-height:32px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+#online .on__prod p{font-size:14px;line-height:20px;color:var(--ink-2)}
+#online .on__buy{margin-top:16px;display:flex;align-items:center;gap:16px}
+#online .on__buy b{font-size:20px;line-height:28px;font-weight:500;color:var(--ink)}
+#online .on__buy span{height:40px;padding:0 16px;border-radius:999px;background:#1A1A1A;color:#fff;display:flex;align-items:center;font-size:14px}
+
+/* widget */
+#online .on__wd{position:absolute;right:24px;top:104px;width:304px;background:#fff;border-radius:20px;border:1px solid var(--line);box-shadow:0 2px 6px rgba(10,10,11,.06),0 32px 64px rgba(31,41,82,.2);padding:24px;z-index:5;transition:opacity .3s,transform .3s,visibility .3s}
+#online .on__wh{display:flex;align-items:center;gap:8px;font-size:13px;line-height:16px;color:var(--ink-2)}
+#online .on__wh img{width:24px;height:24px;border-radius:8px;object-fit:cover}
+#online .on__lab{margin-top:16px;font-size:13px;line-height:16px;color:var(--ink-2)}
+#online .on__amt{margin-top:4px;font-size:28px;line-height:36px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+#online .on__amt small{font-size:18px;font-weight:500}
+#online .on__mt{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#online .on__mt span{height:40px;border-radius:10px;border:1px solid #ECECEF;background:#fff;display:flex;align-items:center;justify-content:center}
+#online .on__mt span.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+#online .on__mt img{max-height:18px;max-width:52px}
+#online .on__code{margin-top:8px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+#online .on__code span{height:40px;border-radius:12px;background:#F2F3F7;border:1px solid #ECECEF;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;color:var(--ink)}
+#online .on__code span.f{border-color:var(--ink)}
+#online .on__pay{margin-top:16px;height:48px;border-radius:999px;background:#1A1A1A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+#online .on__by{margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;line-height:16px;color:var(--ink-3)}
+#online .on__by img.lg{width:57px;height:10px}
+#online .on__by img.lk{width:12px;height:12px;opacity:.5}
+
+/* strona płatności */
+#online .on__cog{display:grid;grid-template-columns:240px 312px;gap:24px;height:100%}
+#online .on__sum{position:relative;border-radius:16px;overflow:hidden;height:440px;box-shadow:inset 0 0 0 1px var(--line)}
+#online .on__sum img{width:100%;height:100%;object-fit:cover}
+#online .on__sum div{position:absolute;left:12px;right:12px;bottom:12px;padding:16px;border-radius:16px;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.95);backdrop-filter:blur(24px);box-shadow:var(--shadow)}
+#online .on__sum p{font-size:13px;line-height:16px;color:var(--ink-2)}
+#online .on__sum b{display:block;margin-top:4px;font-size:20px;line-height:28px;font-weight:500;color:var(--ink)}
+#online .on__form h5{font-size:20px;line-height:28px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+#online .on__fld{margin-top:16px;height:48px;border-radius:12px;background:rgba(118,118,128,.08);display:flex;align-items:center;padding:0 16px;font-size:14px;color:var(--ink-3)}
+#online .on__rows{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+#online .on__row{height:48px;border-radius:16px;background:#fff;border:1px solid #ECECEF;display:flex;align-items:center;gap:12px;padding:0 16px;font-size:14px;color:var(--ink)}
+#online .on__row i{width:18px;height:18px;border-radius:50%;border:1.5px solid #8E8E93;flex:none}
+#online .on__row.on{border-color:var(--ink)}
+#online .on__row.on i{border:5px solid #1A1A1A}
+#online .on__row .lg{margin-left:auto;display:flex;gap:8px;align-items:center}
+#online .on__row .lg img{height:16px;width:auto}
+
+/* link */
+#online .on__lk{position:absolute;left:64px;top:144px;width:416px;background:#fff;border-radius:24px;border:1px solid var(--line);box-shadow:0 2px 6px rgba(10,10,11,.06),0 32px 64px rgba(31,41,82,.2);padding:24px;z-index:6;opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .3s,transform .3s,visibility .3s}
+#online .on__lkh{display:flex;align-items:center;gap:12px}
+#online .on__lkh .i{width:40px;height:40px;border-radius:12px;background:#F2F3F7;display:flex;align-items:center;justify-content:center}
+#online .on__lkh .i img{width:20px;height:20px}
+#online .on__lkh p{font-size:16px;line-height:22px;font-weight:500;color:var(--ink)}
+#online .on__lkh b{margin-left:auto;font-size:20px;line-height:28px;font-weight:500;color:var(--ink)}
+#online .on__lu{margin-top:16px;height:56px;border-radius:16px;background:#F2F3F7;border:1px solid #ECECEF;display:flex;align-items:center;gap:8px;padding:0 8px 0 16px}
+#online .on__lu img.l{width:14px;height:14px;opacity:.6}
+#online .on__lu span{font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#online .on__copy{margin-left:auto;flex:none;height:40px;padding:0 16px;border:0;border-radius:999px;background:#1A1A1A;color:#fff;font:500 14px/1 "Aeonik","Inter",sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer}
+#online .on__copy img{width:16px;height:16px;filter:invert(1)}
+#online .on__send{margin-top:16px;display:flex;gap:8px}
+#online .on__send span{height:32px;padding:0 12px;border-radius:999px;border:1px solid #ECECEF;display:flex;align-items:center;font-size:13px;color:var(--ink-2)}
+
+/* zapłacono */
+#online .on__paid{position:absolute;left:24px;bottom:32px;z-index:7;display:flex;align-items:center;gap:12px;padding:12px 16px 12px 12px;border-radius:20px;background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.95);backdrop-filter:blur(24px);box-shadow:var(--shadow-lg);transition:opacity .3s,transform .3s,visibility .3s}
+#online .on__paid i{width:40px;height:40px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 16px rgba(22,163,74,.28)}
+#online .on__paid i img{width:20px;height:20px;filter:invert(1)}
+#online .on__paid p{font-size:16px;line-height:20px;font-weight:700;color:var(--ink)}
+#online .on__paid p span{display:block;font-size:13px;line-height:16px;font-weight:400;color:var(--ink-2)}
+
+/* przełączanie stanów */
+#online #on-c:checked ~ .on__grid .on__wd,
+#online #on-l:checked ~ .on__grid .on__wd{opacity:0;visibility:hidden;transform:translateY(16px)}
+#online #on-c:checked ~ .on__grid .on__shop{opacity:0;visibility:hidden}
+#online #on-c:checked ~ .on__grid .on__co{opacity:1;visibility:visible}
+#online #on-c:checked ~ .on__grid .on__url .u1{opacity:0}
+#online #on-c:checked ~ .on__grid .on__url .u2{opacity:1}
+#online #on-c:checked ~ .on__grid .on__paid{opacity:0;visibility:hidden;transform:translateY(16px)}
+#online #on-l:checked ~ .on__grid .on__br{opacity:.55;filter:blur(2px);transform:translateY(16px)}
+#online #on-l:checked ~ .on__grid .on__lk{opacity:1;visibility:visible;transform:none}
+#online #on-l:checked ~ .on__grid .on__paid{left:auto;right:48px;bottom:96px}
+
+/* 721–1439 */
+@media (min-width:721px) and (max-width:1439px){#online{padding-left:max(16px,calc((100vw - 1240px)/2));padding-right:max(16px,calc((100vw - 1240px)/2))}}
+@media (min-width:721px) and (max-width:1199px){
+  #online .on__grid{grid-template-columns:1fr}
+  #online .on__lead,#online .on__tabs{max-width:454px}
+}
+
+/* 390 */
+@media (max-width:720px){
+  #online{padding:64px 16px}
+  #online .on__grid{grid-template-columns:1fr;gap:32px}
+  #online .on__h2{font-size:32px;line-height:32px}
+  #online .on__d{display:none}
+  #online .on__m{display:inline}
+  #online .on__lead{margin-top:16px}
+  #online .on__tabs{margin-top:24px;flex-direction:row;gap:4px;max-width:none;padding:4px;border-radius:999px;background:var(--card)}
+  #online .on__tab{flex:1;justify-content:center;padding:0;height:40px;align-items:center;border-radius:999px}
+  #online .on__ico,#online .on__td{display:none}
+  #online .on__tab .on__tw{padding:0}
+  #online .on__tt{font-size:14px}
+  #online #on-w:checked ~ .on__grid label[for=on-w],
+  #online #on-c:checked ~ .on__grid label[for=on-c],
+  #online #on-l:checked ~ .on__grid label[for=on-l]{background:#fff;box-shadow:var(--shadow)}
+  #online .on__cta{margin-top:24px;width:100%;justify-content:center}
+  #online .on__scene{height:auto;border-radius:24px;padding:48px 16px 16px}
+  #online .on__br,#online .on__paid{display:none}
+  #online .on__wd,#online .on__lk{position:relative;left:auto;right:auto;top:auto;width:100%;transform:none;transition:none}
+  #online .on__wd{padding:16px}
+  #online .on__lk{display:none;padding:16px}
+  #online #on-l:checked ~ .on__grid .on__wd{display:none}
+  #online #on-c:checked ~ .on__grid .on__wd{opacity:1;visibility:visible;transform:none}
+  #online #on-l:checked ~ .on__grid .on__lk{display:block}
+  #online .on__send span{padding:0 8px}
+}
+</style>
+<section id="online">
+  <div class="on__in">
+    <input class="on__r" type="radio" name="on-tab" id="on-w" checked aria-label="Widget na stronie">
+    <input class="on__r" type="radio" name="on-tab" id="on-c" aria-label="Strona płatności">
+    <input class="on__r" type="radio" name="on-tab" id="on-l" aria-label="Link płatności">
+    <div class="on__grid">
+      <div class="on__text">
+        <h2 class="on__h2"><span>Sklep, widget, link.</span><span class="g">Jeden checkout.</span></h2>
+        <p class="on__lead"><span class="on__d">BLIK, karty i portfele w jednym oknie.<br>Klient zostaje na Twojej stronie.</span><span class="on__m">BLIK, karty i portfele w jednym oknie.</span></p>
+        <div class="on__tabs">
+          <label class="on__tab" for="on-w"><span class="on__ico"><img src="assets/icons/store-2-line.svg" alt=""></span><span class="on__tw"><span class="on__tt"><span class="on__d">Widget na stronie</span><span class="on__m">Widget</span></span><span class="on__td">Przycisk otwiera checkout w oknie.</span></span></label>
+          <label class="on__tab" for="on-c"><span class="on__ico"><img src="assets/icons/secure-payment-line.svg" alt=""></span><span class="on__tw"><span class="on__tt"><span class="on__d">Strona płatności</span><span class="on__m">Strona</span></span><span class="on__td">Po koszyku, ze wszystkimi metodami.</span></span></label>
+          <label class="on__tab" for="on-l"><span class="on__ico"><img src="assets/icons/link.svg" alt=""></span><span class="on__tw"><span class="on__tt"><span class="on__d">Link płatności</span><span class="on__m">Link</span></span><span class="on__td">Mailem, SMS-em lub na WhatsAppie.</span></span></label>
+        </div>
+        <a class="pill pill--light on__cta" href="./">Płatności online <img src="assets/icons/arrow-right-line.svg" alt=""></a>
+      </div>
+
+      <div class="on__scene ui" aria-label="Przykład: widget, strona płatności i link płatności">
+        <span class="on__chip">Przykład</span>
+
+        <div class="on__br" aria-hidden="true">
+          <div class="on__bar">
+            <span class="on__dot" style="background:#FF5F57"></span><span class="on__dot" style="background:#FEBC2E"></span><span class="on__dot" style="background:#28C840"></span>
+            <div class="on__url">
+              <span class="u1"><img src="assets/icons/lock-line.svg" alt="">muzeum-demo.pl/bilety</span>
+              <span class="u2"><img src="assets/icons/lock-line.svg" alt="">pay.paymove.io</span>
+            </div>
+          </div>
+          <div class="on__pg on__shop">
+            <div class="on__nav"><img class="m" src="assets/img/muzeum.jpg" alt="">Muzeum demo<span class="lk"><span>Bilety</span><span>Wystawy</span></span><span class="bag"><img src="assets/icons/shopping-bag-3-line.svg" alt=""></span></div>
+            <img class="on__photo" src="assets/img/muzeum.jpg" alt="">
+            <div class="on__prod">
+              <h4>Bilet wstępu</h4>
+              <p>Sobota, wystawa stała</p>
+              <div class="on__buy"><b>32,00 zł</b><span>Kup bilet</span></div>
+            </div>
+          </div>
+          <div class="on__pg on__co">
+            <div class="on__cog">
+              <div class="on__sum"><img src="assets/img/muzeum.jpg" alt=""><div><p>2 × Bilet wstępu</p><b>64,00 zł</b></div></div>
+              <div class="on__form">
+                <h5>Płatność</h5>
+                <div class="on__fld">E-mail</div>
+                <div class="on__rows">
+                  <div class="on__row on"><i></i>BLIK<span class="lg"><img src="assets/logos/blik-logo.svg" alt="BLIK"></span></div>
+                  <div class="on__row"><i></i>Karta<span class="lg"><img src="assets/logos/visa.svg" alt="Visa"><img src="assets/logos/mastercard.svg" alt="Mastercard"></span></div>
+                  <div class="on__row"><i></i>Apple Pay<span class="lg"><img src="assets/logos/applepay-logo.svg" alt="Apple Pay"></span></div>
+                  <div class="on__row"><i></i>Google Pay<span class="lg"><img src="assets/logos/googlepay-logo.svg" alt="Google Pay"></span></div>
+                </div>
+                <div class="on__pay">Zapłać · 64,00 zł</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="on__wd">
+          <div class="on__wh"><img src="assets/img/muzeum.jpg" alt="">Muzeum demo</div>
+          <p class="on__lab">Do zapłaty</p>
+          <p class="on__amt">64,00 <small>zł</small></p>
+          <div class="on__mt">
+            <span class="on"><img src="assets/logos/blik-logo.svg" alt="BLIK"></span>
+            <span><img src="assets/logos/applepay-logo.svg" alt="Apple Pay"></span>
+            <span><img src="assets/logos/googlepay-logo.svg" alt="Google Pay"></span>
+          </div>
+          <p class="on__lab">Kod BLIK</p>
+          <div class="on__code"><span>7</span><span>7</span><span>7</span><span>4</span><span>1</span><span class="f">2</span></div>
+          <div class="on__pay">Zapłać · 64,00 zł</div>
+          <div class="on__by"><img class="lk" src="assets/icons/lock-line.svg" alt="">Płatność obsługiwana przez <img class="lg" src="assets/logos/logo_paymove_ink.svg" alt="Paymove"></div>
+        </div>
+
+        <div class="on__lk">
+          <div class="on__lkh"><span class="i"><img src="assets/icons/link.svg" alt=""></span><p>Link płatności</p><b>64,00 zł</b></div>
+          <div class="on__lu"><img class="l" src="assets/icons/lock-line.svg" alt=""><span data-on-url>pay.paymove.io/l/bilety-sobota</span><button class="on__copy" type="button" data-on-copy><img src="assets/icons/file-copy-line.svg" alt=""><span>Kopiuj</span></button></div>
+          <div class="on__send"><span>Mail</span><span>SMS</span><span>WhatsApp</span></div>
+        </div>
+
+        <div class="on__paid" aria-hidden="true"><i><img src="assets/icons/check-line.svg" alt=""></i><p>Zapłacono<span>BLIK · 64,00 zł</span></p></div>
+      </div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var b=document.querySelector('#online [data-on-copy]');if(!b)return;
+    b.addEventListener('click',function(){
+      var t=document.querySelector('#online [data-on-url]').textContent,l=b.querySelector('span');
+      var done=function(){l.textContent='Skopiowano';setTimeout(function(){l.textContent='Kopiuj'},1600)};
+      try{navigator.clipboard.writeText('https://'+t).then(done,done)}catch(e){done()}
+    });
+  })();
+  </script>
+</section>
+<style>
+#qr{padding:120px 100px;background:#fff}
+#qr .qr__in{max-width:1240px;margin:0 auto}
+#qr .qr__m{display:none}
+
+/* nagłówek: lewo + prawo w jednej linii */
+#qr .qr__head{display:flex;justify-content:space-between;align-items:flex-end;gap:48px}
+#qr .qr__h2{font-size:48px;line-height:48px;letter-spacing:-.06em;font-weight:500;color:var(--ink)}
+#qr .qr__h2 span{display:block;white-space:nowrap}
+#qr .qr__h2 .g{color:var(--ink-3)}
+#qr .qr__side{display:flex;flex-direction:column;align-items:flex-start;gap:24px;max-width:344px}
+#qr .qr__lead{font-size:16px;line-height:19.2px;letter-spacing:-.02em;color:var(--ink-2)}
+#qr .qr__cta img{width:16px;height:16px}
+
+/* siatka kart */
+#qr .qr__track{margin-top:64px;display:grid;grid-template-columns:6fr 5fr 5fr;gap:16px}
+#qr .qr__card{background:var(--stage);border:1px solid var(--line);border-radius:32px;padding:8px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:0}
+#qr .qr__vis{position:relative;height:440px;border-radius:24px;overflow:hidden;background:var(--card);box-shadow:inset 0 0 0 1px rgba(10,10,11,.05)}
+#qr .qr__txt{padding:24px 24px 24px}
+#qr .qr__t{font-size:28px;line-height:28px;letter-spacing:-.06em;font-weight:500;color:var(--ink)}
+#qr .qr__d{margin-top:12px;font-size:14px;line-height:16.8px;letter-spacing:-.02em;font-weight:400;color:var(--ink-2)}
+#qr .ui{font-family:"Aeonik","Inter",sans-serif;letter-spacing:0}
+#qr .qr__chip{position:absolute;top:16px;right:16px;z-index:5;font-size:12px;line-height:14.4px;letter-spacing:-.02em;color:var(--ink-2);background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:999px;padding:4px 12px;backdrop-filter:blur(12px)}
+
+/* karta 1: zdjęcie + tablica */
+#qr .qr__photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#qr .qr__vis--photo::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,10,11,0) 30%,rgba(10,10,11,.28) 100%)}
+#qr .qr__board{position:absolute;right:32px;top:32px;z-index:2;width:232px;padding:16px 16px 16px;border-radius:20px;background:#fff;overflow:hidden;text-align:center;border:1px solid rgba(255,255,255,.9);box-shadow:0 2px 6px rgba(10,10,11,.08),0 32px 64px rgba(10,14,36,.32);transform:rotate(-2deg)}
+#qr .qr__board::before{content:"";position:absolute;left:-40%;right:-40%;top:0;height:208px;background:linear-gradient(180deg,#2050F5 0%,#184AD7 100%);border-radius:0 0 50% 50% / 0 0 32% 32%}
+#qr .qr__board > *{position:relative}
+#qr .qr__blogo{display:block;margin:0 auto;width:68px;height:12px}
+#qr .qr__bh{margin-top:12px;font-family:"Inter",sans-serif;font-weight:800;font-size:18px;line-height:18px;letter-spacing:-.03em;color:#fff}
+#qr .qr__bs{margin-top:4px;font-family:"Inter",sans-serif;font-weight:700;font-size:13px;line-height:16px;letter-spacing:-.01em;color:rgba(255,255,255,.86)}
+#qr .qr__code{margin:16px auto 0;width:152px;height:152px;padding:12px;background:#fff;border-radius:16px;box-shadow:0 2px 4px rgba(10,10,11,.06),0 12px 24px rgba(10,14,36,.14)}
+#qr .qr__code svg{width:128px;height:128px;display:block}
+#qr .qr__bf{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;font-family:"Inter",sans-serif;font-weight:600;font-size:13px;line-height:16px;color:var(--ink)}
+#qr .qr__bf img{height:14px;width:auto}
+
+/* karta 2: telefon */
+#qr .qr__vis--phone{background:
+  radial-gradient(70% 60% at 50% 0%,#E3E9FB 0%,rgba(227,233,251,0) 70%),
+  radial-gradient(60% 60% at 50% 100%,#ECE6FB 0%,rgba(236,230,251,0) 70%),var(--card)}
+#qr .qr__phone{position:absolute;left:50%;top:24px;width:220px;height:392px;margin-left:-110px;border-radius:40px;background:#E9EAEE;padding:8px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 2px 6px rgba(10,10,11,.08),0 32px 64px rgba(31,41,82,.2)}
+#qr .qr__scr{height:100%;border-radius:32px;background:#F2F3F7;padding:20px 12px 12px;display:flex;flex-direction:column;box-shadow:inset 0 0 0 1px rgba(10,10,11,.06)}
+#qr .qr__merch{display:flex;align-items:center;gap:8px;font-size:13px;line-height:16px;color:#8E8E93}
+#qr .qr__merch img{width:24px;height:24px;border-radius:8px;object-fit:cover}
+#qr .qr__st{margin-top:16px;font-size:20px;line-height:24px;font-weight:700;letter-spacing:-.02em;color:#1A1A1A}
+#qr .qr__fld{margin-top:12px;height:44px;border-radius:12px;background:#fff;border:1px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:13px;color:#8E8E93}
+#qr .qr__fld b{font-weight:500;color:#1A1A1A}
+#qr .qr__chips{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#qr .qr__chips span{height:40px;border-radius:12px;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:#1A1A1A}
+#qr .qr__chips span.on{background:#1A1A1A;color:#fff;border-color:#1A1A1A}
+#qr .qr__sum{margin-top:12px;display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:#8E8E93}
+#qr .qr__sum b{font-size:20px;line-height:24px;font-weight:500;color:#1A1A1A}
+#qr .qr__pay{margin-top:auto;height:44px;border-radius:999px;background:#1A1A1A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+
+/* karta 3: bank + sukces */
+#qr .qr__vis--pay{background:
+  radial-gradient(70% 60% at 50% 100%,#D6F3E1 0%,rgba(214,243,225,0) 70%),
+  radial-gradient(60% 50% at 50% 0%,#E6ECFA 0%,rgba(230,236,250,0) 70%),var(--card)}
+#qr .qr__bank{position:absolute;left:24px;right:24px;top:48px;padding:16px;border-radius:24px;background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.95);backdrop-filter:blur(24px);box-shadow:0 2px 6px rgba(10,10,11,.06),0 24px 48px rgba(31,41,82,.14)}
+#qr .qr__bk{display:flex;align-items:center;gap:12px}
+#qr .qr__bk i{flex:none;width:40px;height:40px;border-radius:12px;background:#0A0A0B;display:flex;align-items:center;justify-content:center}
+#qr .qr__bk i img{width:26px;height:auto}
+#qr .qr__bk p{font-size:13px;line-height:16px;color:#8E8E93}
+#qr .qr__bk p b{display:block;font-size:14px;line-height:20px;font-weight:500;color:#1A1A1A}
+#qr .qr__row{margin-top:16px;padding:12px;border-radius:16px;background:#F2F3F7;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#8E8E93}
+#qr .qr__row b{font-size:20px;line-height:24px;font-weight:500;color:#1A1A1A}
+#qr .qr__btns{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#qr .qr__btns span{height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;background:#fff;border:1px solid rgba(0,0,0,.08);color:#1A1A1A}
+#qr .qr__btns span.ok{background:#1A1A1A;border-color:#1A1A1A;color:#fff}
+#qr .qr__done{position:absolute;left:48px;right:48px;bottom:48px;display:flex;align-items:center;gap:12px;padding:12px 16px 12px 12px;border-radius:20px;background:#fff;border:1px solid var(--line);box-shadow:0 2px 6px rgba(10,10,11,.06),0 32px 64px rgba(22,101,52,.18)}
+#qr .qr__done i{flex:none;width:40px;height:40px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 16px rgba(22,163,74,.28)}
+#qr .qr__done i img{width:20px;height:20px;filter:invert(1)}
+#qr .qr__done p{font-size:16px;line-height:20px;font-weight:700;color:#1A1A1A}
+#qr .qr__done p span{display:block;font-size:13px;line-height:16px;font-weight:400;color:#8E8E93}
+
+/* kropki tylko mobile */
+#qr .qr__dots{display:none}
+
+/* 721–1439 */
+@media (min-width:721px) and (max-width:1439px){#qr{padding-left:max(16px,calc((100vw - 1240px)/2));padding-right:max(16px,calc((100vw - 1240px)/2))}}
+@media (min-width:721px) and (max-width:1100px){
+  #qr .qr__track{grid-template-columns:1fr 1fr}
+  #qr .qr__card:first-child{grid-column:1 / -1}
+}
+
+/* 390 */
+@media (max-width:720px){
+  #qr{padding:64px 16px}
+  #qr .qr__d-only{display:none}
+  #qr .qr__m{display:inline}
+  #qr .qr__head{flex-direction:column;align-items:flex-start;gap:16px}
+  #qr .qr__h2{font-size:32px;line-height:32px}
+  #qr .qr__side{gap:24px;max-width:none}
+  #qr .qr__track{margin-top:32px;display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  #qr .qr__track::-webkit-scrollbar{display:none}
+  #qr .qr__card{flex:0 0 100%;scroll-snap-align:start;border-radius:24px}
+  #qr .qr__vis{height:440px;border-radius:16px}
+  #qr .qr__board{left:50%;right:auto;margin-left:-116px}
+  #qr .qr__txt{padding:16px}
+  #qr .qr__dots{margin-top:16px;display:flex;justify-content:center;gap:8px}
+  #qr .qr__dots button{width:8px;height:8px;border:0;border-radius:999px;background:rgba(10,10,11,.16);cursor:pointer;transition:width .2s,background .2s}
+  #qr .qr__dots button[aria-current="true"]{width:24px;background:var(--ink)}
+}
+</style>
+<section id="qr">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="qr-sym" viewBox="0 0 21 21">
+      <g fill="#0A0A0B">
+        <path fill-rule="evenodd" d="M0 0h7v7H0z M1 1v5h5V1z M2 2h3v3H2z"/>
+        <path fill-rule="evenodd" d="M14 0h7v7h-7z M15 1v5h5V1z M16 2h3v3h-3z"/>
+        <path fill-rule="evenodd" d="M0 14h7v7H0z M1 15v5h5v-5z M2 16h3v3H2z"/>
+        <path d="M8 0h2v1h-2z M11 0h2v1h-2z M9 1h1v1h-1z M12 1h1v1h-1z M8 2h1v1h-1z M10 2h3v1h-3z M8 3h3v1h-3z M12 3h1v1h-1z M9 4h1v1h-1z M11 4h2v1h-2z M8 5h2v1h-2z M12 5h1v1h-1z M8 6h1v1h-1z M10 6h1v1h-1z M12 6h1v1h-1z M8 7h1v1h-1z M11 7h2v1h-2z M0 8h1v1h-1z M2 8h3v1h-3z M6 8h1v1h-1z M14 8h2v1h-2z M17 8h1v1h-1z M19 8h2v1h-2z M1 9h2v1h-2z M5 9h2v1h-2z M15 9h1v1h-1z M18 9h2v1h-2z M0 10h1v1h-1z M3 10h1v1h-1z M6 10h1v1h-1z M14 10h3v1h-3z M20 10h1v1h-1z M1 11h3v1h-3z M5 11h1v1h-1z M16 11h1v1h-1z M18 11h2v1h-2z M0 12h2v1h-2z M4 12h3v1h-3z M14 12h1v1h-1z M17 12h3v1h-3z M8 13h1v1h-1z M10 13h3v1h-3z M14 13h2v1h-2z M18 13h1v1h-1z M9 14h2v1h-2z M13 14h1v1h-1z M15 14h3v1h-3z M20 14h1v1h-1z M8 15h1v1h-1z M11 15h2v1h-2z M14 15h1v1h-1z M17 15h2v1h-2z M8 16h3v1h-3z M12 16h1v1h-1z M15 16h2v1h-2z M19 16h2v1h-2z M9 17h1v1h-1z M11 17h3v1h-3z M16 17h1v1h-1z M18 17h1v1h-1z M8 18h1v1h-1z M10 18h1v1h-1z M13 18h2v1h-2z M17 18h3v1h-3z M9 19h3v1h-3z M14 19h1v1h-1z M16 19h2v1h-2z M20 19h1v1h-1z M8 20h1v1h-1z M11 20h2v1h-2z M15 20h3v1h-3z M19 20h1v1h-1z"/>
+      </g>
+      <rect x="8.25" y="8.25" width="4.5" height="4.5" rx="1" fill="#fff"/>
+      <image href="assets/logos/paymove-sygnet-ink.svg" x="8.75" y="8.75" width="3.5" height="3.5"/>
+    </symbol>
+  </svg>
+
+  <div class="qr__in">
+    <div class="qr__head">
+      <h2 class="qr__h2"><span>Klient skanuje.</span><span class="g">Płaci telefonem.</span></h2>
+      <div class="qr__side">
+        <p class="qr__lead"><span class="qr__d-only">Kod na tablicy, stoliku lub bilecie.<br>Bez aplikacji i bez terminala.</span><span class="qr__m">Bez aplikacji i bez terminala.</span></p>
+        <a class="pill pill--light pill--sm qr__cta" href="./">Płatności QR <img src="assets/icons/arrow-right-line.svg" alt=""></a>
+      </div>
+    </div>
+
+    <div class="qr__track" data-qr-track>
+      <!-- 1 Skanuj -->
+      <article class="qr__card">
+        <div class="qr__vis qr__vis--photo" aria-label="Przykład: tablica QR Paymove na parkingu">
+          <img class="qr__photo" src="assets/img/parking-kierowca.jpg" alt="">
+          <div class="qr__board">
+            <img class="qr__blogo" src="assets/logos/logo-white.svg" alt="Paymove">
+            <p class="qr__bh">ZESKANUJ KOD QR</p>
+            <p class="qr__bs">ZAPŁAĆ ZA PARKING</p>
+            <div class="qr__code"><svg viewBox="0 0 21 21" role="img" aria-label="Kod QR"><use href="#qr-sym"/></svg></div>
+            <div class="qr__bf"><img src="assets/logos/blik-logo.svg" alt="BLIK">Bez aplikacji.</div>
+          </div>
+        </div>
+        <div class="qr__txt">
+          <h3 class="qr__t">Skanuj</h3>
+          <p class="qr__d"><span class="qr__d-only">Aparat telefonu otwiera płatność.<br>Bez instalowania aplikacji.</span><span class="qr__m">Aparatem, bez aplikacji.</span></p>
+        </div>
+      </article>
+
+      <!-- 2 Wybierz -->
+      <article class="qr__card">
+        <div class="qr__vis qr__vis--phone ui" aria-label="Przykład: wybór czasu postoju w telefonie">
+          <span class="qr__chip">Przykład</span>
+          <div class="qr__phone">
+            <div class="qr__scr">
+              <div class="qr__merch"><img src="assets/img/parking-kierowca.jpg" alt="">Parking demo</div>
+              <p class="qr__st">Czas postoju</p>
+              <div class="qr__fld">Nr rejestracyjny<b>GD 12345</b></div>
+              <div class="qr__chips"><span>1 h</span><span class="on">2 h</span><span>3 h</span><span>Cały dzień</span></div>
+              <div class="qr__sum">Do zapłaty<b>8,00 zł</b></div>
+              <div class="qr__pay">Zapłać · 8,00 zł</div>
+            </div>
+          </div>
+        </div>
+        <div class="qr__txt">
+          <h3 class="qr__t">Wybierz</h3>
+          <p class="qr__d"><span class="qr__d-only">Czas postoju, kwota albo bilet<br>są już na ekranie.</span><span class="qr__m">Czas lub kwota już na ekranie.</span></p>
+        </div>
+      </article>
+
+      <!-- 3 Zapłać -->
+      <article class="qr__card">
+        <div class="qr__vis qr__vis--pay ui" aria-label="Przykład: potwierdzenie BLIK w aplikacji banku i stan zapłacono">
+          <div class="qr__bank">
+            <div class="qr__bk"><i><img src="assets/logos/blik-wordmark-white.svg" alt="BLIK"></i><p>Aplikacja banku<b>Potwierdź płatność</b></p></div>
+            <div class="qr__row">Parking demo<b>8,00 zł</b></div>
+            <div class="qr__btns"><span>Odrzuć</span><span class="ok">Zatwierdź</span></div>
+          </div>
+          <div class="qr__done"><i><img src="assets/icons/check-line.svg" alt=""></i><p>Zapłacono<span>BLIK · 8,00 zł</span></p></div>
+        </div>
+        <div class="qr__txt">
+          <h3 class="qr__t">Zapłać</h3>
+          <p class="qr__d"><span class="qr__d-only">BLIK potwierdzasz w aplikacji banku.<br>Apple Pay i Google Pay też działają.</span><span class="qr__m">BLIK potwierdzasz w banku.</span></p>
+        </div>
+      </article>
+    </div>
+
+    <div class="qr__dots" data-qr-dots>
+      <button type="button" aria-label="Krok 1: Skanuj" aria-current="true"></button>
+      <button type="button" aria-label="Krok 2: Wybierz" aria-current="false"></button>
+      <button type="button" aria-label="Krok 3: Zapłać" aria-current="false"></button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var t=document.querySelector('#qr [data-qr-track]'),d=document.querySelectorAll('#qr [data-qr-dots] button');
+    if(!t||!d.length)return;
+    function set(i){d.forEach(function(b,k){b.setAttribute('aria-current',k===i?'true':'false')})}
+    t.addEventListener('scroll',function(){var w=t.clientWidth||1;set(Math.round(t.scrollLeft/(w+16)))},{passive:true});
+    d.forEach(function(b,i){b.addEventListener('click',function(){t.scrollTo({left:i*(t.clientWidth+16),behavior:'smooth'})})});
+  })();
+  </script>
+</section>
+<style>
+@font-face{font-family:"Plex Mono";src:url("assets/fonts/IBMPlexMono-Medium.ttf") format("truetype");font-weight:500;font-display:swap}
+#agent{position:relative;overflow:hidden;background:#0A0A0B;color:#fff;padding:120px 100px}
+#agent .ag__in{position:relative;max-width:1240px;margin:0 auto}
+#agent .ag__m{display:none}
+#agent .ui{font-family:"Aeonik","Inter",sans-serif;letter-spacing:0}
+#agent .mono{font-family:"Plex Mono",ui-monospace,monospace;font-weight:500}
+
+/* nagłówek */
+#agent .ag__head{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center}
+#agent .ag__h2{font-size:48px;line-height:48px;letter-spacing:-.06em;font-weight:500;color:#fff}
+#agent .ag__h2 span{display:block;white-space:nowrap}
+#agent .ag__h2 .g{color:rgba(255,255,255,.5)}
+#agent .ag__lead{margin-top:16px;max-width:480px;font-size:16px;line-height:19.2px;letter-spacing:-.02em;color:rgba(255,255,255,.64)}
+
+/* scena */
+#agent .ag__stage{position:relative;margin-top:64px;height:600px}
+#agent .ag__net{position:absolute;left:50%;top:50%;width:1440px;height:800px;margin:-400px 0 0 -720px;z-index:0;pointer-events:none}
+#agent .ag__net iframe{display:block;width:1440px;height:800px;border:0;pointer-events:none;background:#0A0A0B}
+#agent .ag__net::after{content:"";position:absolute;inset:0;background:
+  linear-gradient(180deg,#0A0A0B 0%,rgba(10,10,11,0) 16%,rgba(10,10,11,0) 84%,#0A0A0B 100%),
+  linear-gradient(90deg,#0A0A0B 0%,rgba(10,10,11,0) 12%,rgba(10,10,11,0) 88%,#0A0A0B 100%)}
+#agent .ag__chip{position:absolute;top:16px;right:16px;font-size:12px;line-height:14.4px;letter-spacing:-.02em;color:rgba(255,255,255,.64);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:4px 12px}
+
+/* telefony */
+#agent .ag__ph{position:absolute;top:40px;width:264px;padding:8px;border-radius:48px;background:#16171B;z-index:2;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 2px 6px rgba(0,0,0,.4),0 32px 64px rgba(0,0,0,.5),0 0 120px 8px rgba(24,74,215,.32)}
+#agent .ag__ph--a{left:284px}
+#agent .ag__ph--b{left:692px}
+#agent .ag__scr{border-radius:40px;overflow:hidden;background:#F2F3F7;aspect-ratio:390/796;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+#agent .ag__scr img{display:block;width:100%;height:auto;margin-top:-12.4%}
+
+/* karty szklane */
+#agent .ag__card{position:absolute;top:144px;width:252px;padding:16px;border-radius:24px;z-index:2;
+  background:rgba(22,23,27,.72);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 4px rgba(0,0,0,.3),0 24px 48px rgba(0,0,0,.4)}
+#agent .ag__chat{left:0}
+#agent .ag__bots{right:0;top:184px}
+#agent .ag__ch{display:flex;align-items:center;gap:8px;font-size:14px;line-height:20px;font-weight:500}
+#agent .ag__ch img{width:24px;height:24px;padding:4px;border-radius:8px;background:#fff}
+#agent .ag__chat .ag__chip{position:static;margin-left:auto}
+#agent .ag__u{margin:16px 0 0 auto;max-width:200px;padding:8px 12px;border-radius:16px 16px 4px 16px;background:#fff;color:#0A0A0B;font-size:14px;line-height:18px}
+#agent .ag__a{margin-top:12px;font-size:14px;line-height:18px;color:rgba(255,255,255,.86)}
+#agent .ag__item{margin-top:12px;display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+#agent .ag__item i{flex:none;width:32px;height:32px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center}
+#agent .ag__item i img{width:16px;height:16px}
+#agent .ag__item p{font-size:13px;line-height:16px;color:rgba(255,255,255,.64)}
+#agent .ag__item p b{display:block;font-size:14px;line-height:18px;font-weight:500;color:#fff}
+#agent .ag__wait{margin-top:12px;display:flex;align-items:center;gap:8px;font-size:13px;line-height:16px;color:rgba(255,255,255,.64)}
+#agent .ag__spin{flex:none;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.16);border-top-color:#fff;animation:agsp 1s linear infinite}
+@keyframes agsp{to{transform:rotate(360deg)}}
+#agent .ag__bt{font-size:14px;line-height:20px;font-weight:500}
+#agent .ag__list{margin-top:12px;display:flex;flex-direction:column}
+#agent .ag__list div{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:14px;line-height:20px}
+#agent .ag__list div+div{border-top:1px solid rgba(255,255,255,.08)}
+#agent .ag__list span{flex:none;width:32px;height:32px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center}
+#agent .ag__list img{width:18px;height:18px}
+#agent .ag__note{margin-top:12px;font-size:13px;line-height:16px;color:rgba(255,255,255,.5)}
+
+/* linia przepływu */
+#agent .ag__flow{position:relative;z-index:2;margin-top:24px;display:grid;grid-template-columns:252px 32px 264px 144px 264px 32px 252px;padding-top:24px}
+#agent .ag__flow::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.16) 12%,rgba(255,255,255,.16) 88%,rgba(255,255,255,0))}
+#agent .ag__step{position:relative;text-align:center;font-size:13px;line-height:16px;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,255,255,.64)}
+#agent .ag__step::before{content:"";position:absolute;left:50%;top:-28px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#fff;box-shadow:0 0 12px 2px rgba(24,74,215,.8)}
+#agent .ag__step:nth-child(1){grid-column:1}
+#agent .ag__step:nth-child(2){grid-column:3}
+#agent .ag__step:nth-child(3){grid-column:5}
+
+/* MCP */
+#agent .ag__mcp{position:relative;z-index:2;margin-top:96px;display:grid;grid-template-columns:5fr 7fr;gap:48px;align-items:center}
+#agent .ag__h3{font-size:28px;line-height:28px;letter-spacing:-.06em;font-weight:500}
+#agent .ag__h3 span{display:block}
+#agent .ag__desc{margin-top:16px;max-width:344px;font-size:14px;line-height:16.8px;letter-spacing:-.02em;font-weight:400;color:rgba(255,255,255,.64)}
+#agent .ag__cta{margin-top:32px;display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 24px;border-radius:999px;background:#fff;color:#0A0A0B;font-size:16px;letter-spacing:-.02em;font-weight:500;transition:transform .2s}
+#agent .ag__cta:hover{transform:translateY(-1px)}
+#agent .ag__cta img{width:16px;height:16px}
+#agent .ag__code{position:relative;min-width:0;border-radius:24px;background:rgba(22,23,27,.88);border:1px solid rgba(255,255,255,.1);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 4px rgba(0,0,0,.3),0 24px 48px rgba(0,0,0,.4),0 0 96px rgba(24,74,215,.18)}
+#agent .ag__r{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+#agent .ag__bar{display:flex;align-items:center;gap:8px;padding:8px 16px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+#agent .ag__tabs{display:flex;gap:4px;min-width:0;overflow-x:auto;scrollbar-width:none}
+#agent .ag__tabs::-webkit-scrollbar{display:none}
+#agent .ag__tab{flex:none;display:flex;align-items:center;gap:8px;height:48px;padding:0 12px;font-size:14px;color:rgba(255,255,255,.5);border-bottom:2px solid transparent;cursor:pointer;transition:color .2s,border-color .2s}
+#agent .ag__tab:hover{color:rgba(255,255,255,.86)}
+#agent .ag__tab img{width:16px;height:16px}
+#agent .ag__tab img.inv{filter:invert(1)}
+#agent .ag__copy{margin-left:auto;flex:none;display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:transparent;color:#fff;font:500 13px/1 "Inter",sans-serif;cursor:pointer}
+#agent .ag__copy img{width:14px;height:14px;filter:invert(1)}
+#agent .ag__pane{display:none;padding:24px}
+#agent .ag__file{font-size:12px;line-height:16px;color:rgba(255,255,255,.4)}
+#agent .ag__pre{margin-top:12px;font-size:14px;line-height:24px;color:rgba(255,255,255,.86);white-space:pre;overflow-x:auto}
+#agent .ag__pre .s{color:#9DB7FF}
+#agent .ag__pre .p{color:rgba(255,255,255,.4)}
+#agent .ag__foot{display:flex;align-items:center;gap:8px;padding:16px 24px;border-top:1px solid rgba(255,255,255,.08);font-size:13px;line-height:16px;color:rgba(255,255,255,.64)}
+#agent .ag__foot i{width:8px;height:8px;border-radius:50%;background:#4ADE80;box-shadow:0 0 8px rgba(74,222,128,.6)}
+#agent .ag__foot span{margin-left:auto;font-size:12px;color:rgba(255,255,255,.4)}
+
+#agent #ag-c:checked ~ .ag__bar label[for=ag-c],
+#agent #ag-o:checked ~ .ag__bar label[for=ag-o],
+#agent #ag-g:checked ~ .ag__bar label[for=ag-g],
+#agent #ag-p:checked ~ .ag__bar label[for=ag-p]{color:#fff;border-color:#fff}
+#agent #ag-c:checked ~ .ag__panes [data-pane=ag-c],
+#agent #ag-o:checked ~ .ag__panes [data-pane=ag-o],
+#agent #ag-g:checked ~ .ag__panes [data-pane=ag-g],
+#agent #ag-p:checked ~ .ag__panes [data-pane=ag-p]{display:block}
+#agent #ag-c:focus-visible ~ .ag__bar label[for=ag-c],
+#agent #ag-o:focus-visible ~ .ag__bar label[for=ag-o],
+#agent #ag-g:focus-visible ~ .ag__bar label[for=ag-g],
+#agent #ag-p:focus-visible ~ .ag__bar label[for=ag-p]{outline:2px solid #fff;outline-offset:-2px;border-radius:8px}
+
+/* 721–1439 */
+@media (min-width:721px) and (max-width:1439px){#agent{padding-left:max(16px,calc((100vw - 1240px)/2));padding-right:max(16px,calc((100vw - 1240px)/2))}}
+@media (min-width:1024px) and (max-width:1271px){#agent .ag__stage,#agent .ag__flow{zoom:.8}}
+
+/* stos pionowy < 1024 */
+@media (max-width:1023px){
+  #agent .ag__stage{height:auto;display:flex;flex-direction:column;align-items:center;gap:32px}
+  #agent .ag__net{top:120px;margin-top:0}
+  #agent .ag__card,#agent .ag__ph{position:relative;left:auto;right:auto;top:auto}
+  #agent .ag__chat{width:100%;max-width:400px}
+  #agent .ag__ph--a{width:300px}
+  #agent .ag__ph--b,#agent .ag__bots,#agent .ag__flow{display:none}
+  #agent .ag__mcp{grid-template-columns:1fr;gap:32px;margin-top:64px}
+}
+
+/* 390 */
+@media (max-width:720px){
+  #agent{padding:64px 16px}
+  #agent .ag__d{display:none}
+  #agent .ag__m{display:inline}
+  #agent .ag__h2{font-size:32px;line-height:32px}
+  #agent .ag__lead{max-width:320px}
+  #agent .ag__stage{margin-top:48px;gap:24px}
+  #agent .ag__chat{max-width:none}
+  #agent .ag__ph--a{width:min(300px,100%)}
+  #agent .ag__desc{max-width:none}
+  #agent .ag__cta{width:100%;justify-content:center;margin-top:24px}
+  #agent .ag__bar{padding:8px 8px 0 16px}
+  #agent .ag__tab{padding:0 8px}
+  #agent .ag__copy span{display:none}
+  #agent .ag__copy{width:32px;padding:0;justify-content:center}
+  #agent .ag__pane{padding:16px}
+  #agent .ag__pre{font-size:13px;line-height:20px;white-space:pre-wrap;word-break:break-all;overflow-x:visible}
+  #agent .ag__foot{padding:16px}
+}
+</style>
+<section id="agent">
+  <div class="ag__in">
+    <div class="ag__head">
+      <h2 class="ag__h2"><span>Agent przygotowuje.</span><span class="g">Klient zatwierdza.</span></h2>
+      <p class="ag__lead"><span class="ag__d">Asystent AI składa koszyk, Paymove tworzy płatność.<br>BLIK zawsze potwierdzasz w aplikacji banku.</span><span class="ag__m">Agent składa koszyk.<br>BLIK potwierdzasz w banku.</span></p>
+    </div>
+
+    <div class="ag__stage" aria-label="Przykład: agent przygotowuje płatność, klient zatwierdza ją w aplikacji banku">
+      <div class="ag__net" aria-hidden="true"><iframe src="assets/net.html" title="" aria-hidden="true" tabindex="-1" loading="lazy"></iframe></div>
+
+      <div class="ag__card ag__chat ui">
+        <div class="ag__ch"><img src="assets/ai/claude-color.svg" alt="Claude">Claude<span class="ag__chip">Przykład</span></div>
+        <p class="ag__u">Zapłać za parking w Oliwie na 24 h.</p>
+        <p class="ag__a">Przygotowałem płatność. Zatwierdź ją w aplikacji banku.</p>
+        <div class="ag__item"><i><img src="assets/icons/parking-box-line.svg" alt=""></i><p><b>Parking Gdańsk Oliwa 24 h</b>240,00 zł</p></div>
+        <div class="ag__wait"><span class="ag__spin"></span>Czeka na potwierdzenie w banku</div>
+      </div>
+
+      <div class="ag__ph ag__ph--a">
+        <div class="ag__scr"><img src="assets/wallet/potwierdzenie.jpg" alt="Wallet Paymove: Claude prosi o 240,00 zł za parking, zatwierdzenie w aplikacji banku"></div>
+      </div>
+
+      <div class="ag__ph ag__ph--b">
+        <div class="ag__scr"><img src="assets/wallet/potwierdzenie__zatwierdzono.jpg" alt="Wallet Paymove: Zapłacono, płatność zatwierdzona w aplikacji banku"></div>
+      </div>
+
+      <div class="ag__card ag__bots ui">
+        <p class="ag__bt">Asystenci w Wallecie</p>
+        <div class="ag__list">
+          <div><span><img src="assets/ai/claude-color.svg" alt=""></span>Claude</div>
+          <div><span><img src="assets/ai/openai.svg" alt=""></span>ChatGPT</div>
+          <div><span><img src="assets/ai/grok.svg" alt=""></span>Grok</div>
+          <div><span><img src="assets/ai/perplexity-color.svg" alt=""></span>Perplexity</div>
+        </div>
+        <p class="ag__note">Nowego bota połączysz linkiem z czatu.</p>
+      </div>
+    </div>
+
+    <div class="ag__flow mono" aria-hidden="true">
+      <span class="ag__step">Agent przygotowuje</span>
+      <span class="ag__step">Ty zatwierdzasz w banku</span>
+      <span class="ag__step">Zapłacono</span>
+    </div>
+
+    <div class="ag__mcp">
+      <div class="ag__txt">
+        <h3 class="ag__h3"><span>Podłącz agenta</span><span>przez MCP.</span></h3>
+        <p class="ag__desc"><span class="ag__d">Jedna komenda dodaje serwer Paymove.<br>Płatnik zawsze potwierdza w banku.</span><span class="ag__m">Jedna komenda dodaje serwer Paymove.</span></p>
+        <a class="ag__cta" href="./">Otwórz dokumentację <img src="assets/icons/arrow-right-line.svg" alt=""></a>
+      </div>
+
+      <div class="ag__code">
+        <input class="ag__r" type="radio" name="ag-tab" id="ag-c" checked aria-label="Claude">
+        <input class="ag__r" type="radio" name="ag-tab" id="ag-o" aria-label="ChatGPT">
+        <input class="ag__r" type="radio" name="ag-tab" id="ag-g" aria-label="Grok">
+        <input class="ag__r" type="radio" name="ag-tab" id="ag-p" aria-label="Perplexity">
+        <div class="ag__bar">
+          <div class="ag__tabs">
+            <label class="ag__tab" for="ag-c"><img src="assets/ai/claude-color.svg" alt="">Claude</label>
+            <label class="ag__tab" for="ag-o"><img class="inv" src="assets/ai/openai.svg" alt="">ChatGPT</label>
+            <label class="ag__tab" for="ag-g"><img class="inv" src="assets/ai/grok.svg" alt="">Grok</label>
+            <label class="ag__tab" for="ag-p"><img src="assets/ai/perplexity-color.svg" alt="">Perplexity</label>
+          </div>
+          <button class="ag__copy" type="button" data-ag-copy aria-label="Kopiuj konfigurację"><img src="assets/icons/file-copy-line.svg" alt=""><span>Kopiuj</span></button>
+        </div>
+        <div class="ag__panes mono">
+          <div class="ag__pane" data-pane="ag-c"><p class="ag__file">terminal</p><pre class="ag__pre" data-code><span class="p">$ </span>claude mcp add --transport http paymove <span class="s">https://api.paymove.io/api/mcp</span></pre></div>
+          <div class="ag__pane" data-pane="ag-o"><p class="ag__file">konfiguracja MCP (JSON)</p><pre class="ag__pre" data-code>{
+  "mcpServers": {
+    "paymove": {
+      "url": <span class="s">"https://api.paymove.io/api/mcp"</span>
+    }
+  }
+}</pre></div>
+          <div class="ag__pane" data-pane="ag-g"><p class="ag__file">konfiguracja MCP (JSON)</p><pre class="ag__pre" data-code>{
+  "mcpServers": {
+    "paymove": {
+      "url": <span class="s">"https://api.paymove.io/api/mcp"</span>
+    }
+  }
+}</pre></div>
+          <div class="ag__pane" data-pane="ag-p"><p class="ag__file">konfiguracja MCP (JSON)</p><pre class="ag__pre" data-code>{
+  "mcpServers": {
+    "paymove": {
+      "url": <span class="s">"https://api.paymove.io/api/mcp"</span>
+    }
+  }
+}</pre></div>
+        </div>
+        <div class="ag__foot"><i></i>Testy w sandboxie kodem BLIK<span class="mono">sandbox</span></div>
+      </div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var b=document.querySelector('#agent [data-ag-copy]');if(!b)return;
+    b.addEventListener('click',function(){
+      var r=document.querySelector('#agent .ag__r:checked');if(!r)return;
+      var pre=document.querySelector('#agent [data-pane="'+r.id+'"] [data-code]');
+      var t=pre.textContent.replace(/^\$ /,''),l=b.querySelector('span');
+      var done=function(){if(l){l.textContent='Skopiowano';setTimeout(function(){l.textContent='Kopiuj'},1600)}};
+      try{navigator.clipboard.writeText(t).then(done,done)}catch(e){done()}
+    });
+  })();
+  </script>
+</section>
+<style>
+#start{padding:120px 100px;background:#fff}
+#start .st__in{max-width:1240px;margin:0 auto}
+#start .st__m{display:none}
+#start .ui{font-family:"Aeonik","Inter",sans-serif;letter-spacing:0}
+
+/* split 7/5, scena z lewej */
+#start .st__grid{display:grid;grid-template-columns:7fr 5fr;gap:64px;align-items:center}
+
+/* scena z paragonem */
+#start .st__scene{position:relative;height:600px;border-radius:32px;overflow:hidden;
+  background:
+    radial-gradient(60% 60% at 0% 0%,#D6E2FB 0%,rgba(214,226,251,0) 70%),
+    radial-gradient(60% 70% at 100% 100%,#E4DAFB 0%,rgba(228,218,251,0) 70%),
+    radial-gradient(50% 50% at 90% 10%,#DDF3EA 0%,rgba(221,243,234,0) 70%),
+    #F7F7F7;
+  box-shadow:inset 0 0 0 1px rgba(10,10,11,.06)}
+#start .st__scene::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(10,10,11,.06) 1px,transparent 1px);background-size:24px 24px;-webkit-mask-image:radial-gradient(70% 70% at 50% 50%,#000,transparent);mask-image:radial-gradient(70% 70% at 50% 50%,#000,transparent)}
+
+#start .st__rc{position:absolute;left:50%;top:96px;width:376px;margin-left:-188px;z-index:2;padding:24px;border-radius:24px;background:#fff;border:1px solid var(--line);transform:rotate(-2deg);
+  box-shadow:0 2px 6px rgba(10,10,11,.06),0 32px 64px rgba(31,41,82,.18)}
+#start .st__rch{display:flex;align-items:center;gap:8px}
+#start .st__rch p{font-size:16px;line-height:22px;font-weight:500;color:#1A1A1A}
+#start .st__ex{margin-left:auto;font-size:12px;line-height:16px;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+#start .st__mer{margin-top:16px;display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:#F2F3F7;box-shadow:inset 0 0 0 1px rgba(10,10,11,.06);font-size:14px;line-height:20px;color:#1A1A1A}
+#start .st__mer img{width:32px;height:32px;border-radius:8px;object-fit:cover}
+#start .st__rows{margin-top:8px}
+#start .st__row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:16px 0;font-size:14px;line-height:20px;color:var(--ink-2)}
+#start .st__row+.st__row{border-top:1px dashed rgba(10,10,11,.12)}
+#start .st__row b{font-size:16px;line-height:22px;font-weight:500;color:#1A1A1A;white-space:nowrap}
+#start .st__row.tot{color:#1A1A1A;font-size:16px}
+#start .st__row.tot b{font-size:28px;line-height:32px;font-weight:700;letter-spacing:-.03em}
+#start .st__logos{margin-top:8px;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+#start .st__logos img{height:16px;width:auto}
+#start .st__logos img.mc{height:20px}
+
+#start .st__paid{position:absolute;left:48px;top:48px;z-index:3;display:flex;align-items:center;gap:8px;padding:8px 16px 8px 8px;border-radius:999px;background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.95);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--shadow-lg);font-size:14px;line-height:20px;font-weight:500;color:#1A1A1A}
+#start .st__paid i{width:24px;height:24px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center}
+#start .st__paid i img{width:14px;height:14px;filter:invert(1)}
+#start .st__in2{position:absolute;right:48px;bottom:64px;z-index:3;display:flex;align-items:center;gap:12px;padding:12px 16px 12px 12px;border-radius:20px;background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.95);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--shadow-lg)}
+#start .st__in2 span{width:40px;height:40px;border-radius:12px;background:#F2F3F7;display:flex;align-items:center;justify-content:center}
+#start .st__in2 span img{width:20px;height:20px}
+#start .st__in2 p{font-size:13px;line-height:16px;color:var(--ink-2)}
+#start .st__in2 p b{display:block;margin-top:4px;font-size:16px;line-height:20px;font-weight:500;color:#1A1A1A}
+
+/* tekst */
+#start .st__h2{font-size:48px;line-height:48px;letter-spacing:-.06em;font-weight:500;color:var(--ink)}
+#start .st__h2 span{display:block;white-space:nowrap}
+#start .st__h2 .g{color:var(--ink-3)}
+#start .st__lead{margin-top:16px;max-width:454px;font-size:16px;line-height:19.2px;letter-spacing:-.02em;color:var(--ink-2)}
+#start .st__big{margin-top:48px;font-size:144px;line-height:128px;letter-spacing:-.06em;font-weight:500;color:var(--ink);white-space:nowrap}
+#start .st__cap{margin-top:12px;font-size:14px;line-height:16.8px;letter-spacing:-.02em;color:var(--ink-2)}
+#start .st__facts{margin-top:32px;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#start .st__fact{padding:24px 0}
+#start .st__fact+.st__fact{border-left:1px solid var(--line);padding-left:24px}
+#start .st__fact b{display:block;font-size:48px;line-height:48px;letter-spacing:-.06em;font-weight:500;color:var(--ink)}
+#start .st__fact span{display:block;margin-top:8px;font-size:14px;line-height:16.8px;letter-spacing:-.02em;color:var(--ink-2)}
+#start .st__cta{margin-top:32px;display:flex;gap:8px;flex-wrap:wrap}
+#start .st__cta img{width:16px;height:16px}
+
+/* oś kroków */
+#start .st__steps{margin-top:96px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px;position:relative;padding-top:32px;list-style:none}
+#start .st__steps::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--line)}
+#start .st__step{position:relative}
+#start .st__step::before{content:"";position:absolute;left:0;top:-36px;width:8px;height:8px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 4px #fff}
+#start .st__n{font-size:14px;line-height:16.8px;letter-spacing:-.02em;color:var(--ink-3)}
+#start .st__t{margin-top:12px;font-size:28px;line-height:28px;letter-spacing:-.06em;font-weight:500;color:var(--ink)}
+#start .st__d{margin-top:12px;max-width:344px;font-size:14px;line-height:16.8px;letter-spacing:-.02em;font-weight:400;color:var(--ink-2)}
+#start .st__note{margin-top:64px;font-size:12px;line-height:14.4px;letter-spacing:-.02em;font-weight:400;color:var(--ink-3)}
+
+/* 721–1439 */
+@media (min-width:721px) and (max-width:1439px){#start{padding-left:max(16px,calc((100vw - 1240px)/2));padding-right:max(16px,calc((100vw - 1240px)/2))}}
+@media (min-width:721px) and (max-width:1199px){
+  #start .st__grid{grid-template-columns:1fr;gap:48px}
+  #start .st__text{order:-1}
+}
+
+/* 390 */
+@media (max-width:720px){
+  #start{padding:64px 16px}
+  #start .st__d-only{display:none}
+  #start .st__m{display:inline}
+  #start .st__grid{grid-template-columns:1fr;gap:48px}
+  #start .st__text{order:-1}
+  #start .st__h2{font-size:32px;line-height:32px}
+  #start .st__big{margin-top:32px;font-size:96px;line-height:88px}
+  #start .st__fact b{font-size:32px;line-height:32px}
+  #start .st__fact+.st__fact{padding-left:16px}
+  #start .st__fact{padding:16px 0}
+  #start .st__cta{flex-direction:column}
+  #start .st__cta .pill{justify-content:center}
+  #start .st__scene{height:auto;border-radius:24px;padding:64px 16px 16px}
+  #start .st__rc{position:relative;left:auto;top:auto;margin-left:0;width:100%;padding:16px;transform:none}
+  #start .st__paid{left:16px;top:16px}
+  #start .st__in2{display:none}
+  #start .st__row.tot b{font-size:24px;line-height:28px}
+  #start .st__steps{margin-top:64px;grid-template-columns:1fr;gap:0;padding-top:0}
+  #start .st__steps::before,#start .st__step::before{display:none}
+  #start .st__step{padding:24px 0;border-top:1px solid var(--line)}
+  #start .st__step:last-child{border-bottom:1px solid var(--line)}
+  #start .st__t{margin-top:8px;font-size:24px;line-height:24px}
+  #start .st__d{margin-top:8px}
+  #start .st__note{margin-top:32px}
+}
+</style>
+<section id="start">
+  <div class="st__in">
+    <div class="st__grid">
+
+      <div class="st__scene ui" aria-label="Przykład: płatność 100,00 zł, prowizja 1,29%, na konto 98,71 zł">
+        <div class="st__paid"><i><img src="assets/icons/check-line.svg" alt=""></i>Zapłacono · BLIK</div>
+
+        <div class="st__rc">
+          <div class="st__rch"><p>Przykładowa płatność</p><span class="st__ex">Przykład</span></div>
+          <div class="st__mer"><img src="assets/img/kawiarnia.jpg" alt="">Kawiarnia demo · checkout</div>
+          <div class="st__rows">
+            <div class="st__row">Klient płaci<b>100,00 zł</b></div>
+            <div class="st__row">Prowizja 1,29%<b>−1,29 zł</b></div>
+            <div class="st__row tot">Na Twoje konto<b>98,71 zł</b></div>
+          </div>
+          <div class="st__logos">
+            <img src="assets/logos/blik-logo.svg" alt="BLIK">
+            <img src="assets/logos/visa.svg" alt="Visa">
+            <img class="mc" src="assets/logos/mastercard.svg" alt="Mastercard">
+            <img src="assets/logos/applepay-logo.svg" alt="Apple Pay">
+            <img src="assets/logos/googlepay-logo.svg" alt="Google Pay">
+          </div>
+        </div>
+
+        <div class="st__in2"><span><img src="assets/icons/wallet-3-line.svg" alt=""></span><p>Wpływ na konto<b>98,71 zł</b></p></div>
+      </div>
+
+      <div class="st__text">
+        <h2 class="st__h2"><span>Sandbox od razu.</span><span class="g">Płacisz od wpływu.</span></h2>
+        <p class="st__lead"><span class="st__d-only">0 zł na start, 0 zł miesięcznie, 1,29% od transakcji.<br>Wdroży agent AI albo programista.</span><span class="st__m">Bez opłat stałych.<br>Wdroży agent AI albo programista.</span></p>
+        <p class="st__big">1,29%</p>
+        <p class="st__cap">od transakcji, stawka bazowa checkoutu</p>
+        <div class="st__facts">
+          <div class="st__fact"><b>0 zł</b><span>na start</span></div>
+          <div class="st__fact"><b>0 zł</b><span>miesięcznie</span></div>
+        </div>
+        <div class="st__cta">
+          <a class="pill pill--dark" href="./">Zacznij za darmo</a>
+          <a class="pill pill--light" href="./">Porozmawiajmy <img src="assets/icons/arrow-right-line.svg" alt=""></a>
+        </div>
+      </div>
+    </div>
+
+    <ol class="st__steps">
+      <li class="st__step">
+        <p class="st__n">1</p>
+        <h3 class="st__t">Podłącz Paymove</h3>
+        <p class="st__d"><span class="st__d-only">Agent AI w Claude Code lub Cursorze.<br>Albo programista przez API.</span><span class="st__m">Agent AI albo programista.</span></p>
+      </li>
+      <li class="st__step">
+        <p class="st__n">2</p>
+        <h3 class="st__t">Testuj w sandboxie</h3>
+        <p class="st__d"><span class="st__d-only">Płatności testowe działają od razu.<br>Testowy BLIK: kod od 777.</span><span class="st__m">Płatności testowe od razu.</span></p>
+      </li>
+      <li class="st__step">
+        <p class="st__n">3</p>
+        <h3 class="st__t">Zweryfikuj firmę</h3>
+        <p class="st__d"><span class="st__d-only">Po weryfikacji wymaganej prawem<br>włączasz prawdziwe płatności.</span><span class="st__m">Potem prawdziwe płatności.</span></p>
+      </li>
+    </ol>
+
+    <p class="st__note">Stawki innych metod i branż: [do potwierdzenia]. Kwoty w makiecie przykładowe.</p>
+  </div>
+</section>
+<style>
+/* ===== #final ===== */
+#final{padding:120px 100px;background:#fff}
+#final .fn__in{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:7fr 5fr;gap:64px;align-items:center}
+#final .fn__m{display:none}
+#final .fn__card{display:flex;flex-direction:column;padding:48px;border-radius:32px;background:#F4F4F4;
+  box-shadow:inset 0 0 0 1px rgba(10,10,11,.06),0 2px 4px rgba(10,10,11,.03),0 12px 24px rgba(10,10,11,.04)}
+#final .fn__h2{font-size:48px;line-height:48px;letter-spacing:-.06em;font-weight:500;color:var(--ink)}
+#final .fn__h2 span{display:block;white-space:nowrap}
+#final .fn__h2 .g{color:var(--ink-3)}
+#final .fn__lead{margin-top:16px;max-width:454px;font-size:16px;line-height:19.2px;letter-spacing:-.02em;color:var(--ink-2)}
+#final .fn__cta{margin-top:32px;display:flex;gap:8px;flex-wrap:wrap}
+#final .fn__cta img{width:16px;height:16px}
+#final .fn__cta .pill--light{background:#fff;box-shadow:inset 0 0 0 1px rgba(10,10,11,.06)}
+
+/* panel-bohater */
+#final .fn__panel{margin-top:48px;padding:24px;border-radius:24px;background:#fff;
+  box-shadow:inset 0 0 0 1px rgba(10,10,11,.06),0 2px 6px rgba(10,10,11,.04),0 24px 48px rgba(31,41,82,.10)}
+#final .fn__ph{display:flex;align-items:center;gap:16px}
+#final .fn__sy{width:48px;height:48px;border-radius:12px;background:#F4F4F4;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(10,10,11,.06)}
+#final .fn__sy img{width:24px;height:24px}
+#final .fn__pt{font-size:16px;line-height:20px;letter-spacing:-.02em;color:var(--ink)}
+#final .fn__pt span{display:block;margin-top:4px;font-size:12px;line-height:14.4px;font-weight:400;color:var(--ink-2)}
+#final .fn__ok{margin-left:auto;display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:999px;background:#F4F4F4;font-size:12px;line-height:14.4px;letter-spacing:-.02em;color:var(--ink)}
+#final .fn__ok i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(22,163,74,.14)}
+#final .fn__logos{margin-top:24px;padding-top:24px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px}
+#final .fn__logos img{height:16px;width:auto}
+#final .fn__logos img.mc{height:20px}
+
+/* FAQ */
+#final .fn__eb{font-size:14px;line-height:16.8px;letter-spacing:-.02em;color:var(--ink-3);margin-bottom:8px}
+#final .fn__q+.fn__q{border-top:1px solid var(--line)}
+#final .fn__q summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:16px;padding:24px 0;font-size:16px;line-height:20px;letter-spacing:-.02em;color:var(--ink)}
+#final .fn__q summary::-webkit-details-marker{display:none}
+#final .fn__q summary .t{flex:1;min-width:0;white-space:nowrap}
+#final .fn__ic{position:relative;flex:none;width:32px;height:32px;border-radius:50%;background:#F4F4F4;box-shadow:inset 0 0 0 1px rgba(10,10,11,.06);transition:background .2s}
+#final .fn__ic::before,#final .fn__ic::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:1.5px;margin:-0.75px 0 0 -6px;background:var(--ink);transition:transform .25s}
+#final .fn__ic::after{transform:rotate(90deg)}
+#final .fn__q[open] .fn__ic{background:var(--ink)}
+#final .fn__q[open] .fn__ic::before,#final .fn__q[open] .fn__ic::after{background:#fff}
+#final .fn__q[open] .fn__ic::after{transform:rotate(0deg)}
+#final .fn__q summary:hover .t{color:var(--ink-2)}
+#final .fn__a{padding:0 48px 24px 0;font-size:14px;line-height:20px;letter-spacing:-.02em;font-weight:400;color:var(--ink-2)}
+
+/* ===== #stopka ===== */
+#stopka{padding:64px 100px 48px;background:#fff;border-top:1px solid var(--line)}
+#stopka .ft__in{max-width:1240px;margin:0 auto}
+#stopka .ft__m{display:none}
+#stopka .ft__top{display:grid;grid-template-columns:4fr 2fr 2fr 2fr 3fr;gap:32px}
+#stopka .ft__logo img{width:114px;height:20px}
+#stopka .ft__claim{margin-top:16px;font-size:14px;line-height:20px;letter-spacing:-.02em;color:var(--ink-2)}
+#stopka .ft__h{font-size:12px;line-height:14.4px;letter-spacing:-.02em;color:var(--ink-3)}
+#stopka .ft__col ul{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:12px}
+#stopka .ft__col a{font-size:14px;line-height:20px;letter-spacing:-.02em;color:var(--ink)}
+#stopka .ft__col a:hover{color:var(--ink-2)}
+#stopka .ft__bot{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);display:flex;align-items:flex-end;gap:32px}
+#stopka .ft__legal{font-size:12px;line-height:16px;letter-spacing:-.02em;font-weight:400;color:var(--ink-2)}
+#stopka .ft__legal p+p{margin-top:4px}
+#stopka .ft__soc{margin-left:auto;display:flex;gap:8px}
+#stopka .ft__soc a{width:32px;height:32px;border-radius:50%;background:#F4F4F4;display:flex;align-items:center;justify-content:center;color:var(--ink);box-shadow:inset 0 0 0 1px rgba(10,10,11,.06);transition:background .2s}
+#stopka .ft__soc a:hover{background:#EAEAEC}
+#stopka .ft__soc svg{width:16px;height:16px;fill:currentColor}
+
+/* 721–1439 */
+@media (min-width:721px) and (max-width:1439px){
+  #final,#stopka{padding-left:max(16px,calc((100vw - 1240px)/2));padding-right:max(16px,calc((100vw - 1240px)/2))}
+}
+@media (min-width:721px) and (max-width:1199px){
+  #final .fn__in{grid-template-columns:1fr;gap:48px}
+  #stopka .ft__top{grid-template-columns:repeat(4,1fr)}
+  #stopka .ft__brand{grid-column:1/-1}
+}
+
+/* 390 */
+@media (max-width:720px){
+  #final{padding:64px 16px}
+  #final .fn__d{display:none}
+  #final .fn__m{display:inline}
+  #final .fn__in{grid-template-columns:1fr;gap:48px}
+  #final .fn__card{padding:24px;border-radius:24px}
+  #final .fn__h2{font-size:32px;line-height:32px}
+  #final .fn__h2 span{white-space:normal}
+  #final .fn__lead{max-width:310px}
+  #final .fn__cta{flex-direction:column}
+  #final .fn__cta .pill{justify-content:center}
+  #final .fn__panel{margin-top:32px;padding:16px;border-radius:20px}
+  #final .fn__sy{width:40px;height:40px}
+  #final .fn__logos{gap:8px}
+  #final .fn__logos img{height:12px}
+  #final .fn__logos img.mc{height:16px}
+  #final .fn__q summary{padding:16px 0}
+  #final .fn__a{padding:0 0 16px}
+
+  #stopka{padding:48px 16px 32px}
+  #stopka .ft__d{display:none}
+  #stopka .ft__m{display:block}
+  #stopka .ft__top{grid-template-columns:1fr;gap:32px}
+  #stopka .ft__acc details+details{border-top:1px solid var(--line)}
+  #stopka .ft__acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:16px 0;font-size:14px;line-height:20px;letter-spacing:-.02em;color:var(--ink)}
+  #stopka .ft__acc summary::-webkit-details-marker{display:none}
+  #stopka .ft__acc summary::after{content:"+";font-size:16px;color:var(--ink-3)}
+  #stopka .ft__acc details[open] summary::after{content:"−"}
+  #stopka .ft__acc ul{list-style:none;padding:0 0 16px;display:flex;flex-direction:column;gap:12px}
+  #stopka .ft__acc a{font-size:14px;line-height:20px;color:var(--ink-2)}
+  #stopka .ft__bot{margin-top:32px;flex-direction:column;align-items:flex-start;gap:24px}
+  #stopka .ft__soc{margin-left:0}
+  #stopka .ft__ln{display:block}
+  #stopka .ft__sep{display:none}
+}
+</style>
+
+<section id="final">
+  <div class="fn__in">
+
+    <div class="fn__card">
+      <h2 class="fn__h2"><span>Zacznij od testu.</span><span class="g">Produkcja po weryfikacji.</span></h2>
+      <p class="fn__lead"><span class="fn__d">Pytania? Opowiedz, co sprzedajesz,<br>a dopasujemy start.</span><span class="fn__m">Opowiedz, co sprzedajesz,<br>a dopasujemy start.</span></p>
+      <div class="fn__cta">
+        <a class="pill pill--dark" href="./">Zacznij za darmo</a>
+        <a class="pill pill--light" href="https://paymove.io/kontakt">Porozmawiajmy <img src="assets/icons/arrow-right-line.svg" alt=""></a>
+      </div>
+
+      <div class="fn__panel ui" aria-label="Sandbox Paymove gotowy do testów">
+        <div class="fn__ph">
+          <span class="fn__sy"><img src="assets/logos/paymove-sygnet-ink.svg" alt=""></span>
+          <p class="fn__pt">Sandbox<span>Płatności testowe działają od razu.</span></p>
+          <span class="fn__ok"><i></i>Gotowy</span>
+        </div>
+        <div class="fn__logos">
+          <img src="assets/logos/blik-logo.svg" alt="BLIK">
+          <img src="assets/logos/applepay-logo.svg" alt="Apple Pay">
+          <img src="assets/logos/googlepay-logo.svg" alt="Google Pay">
+          <img src="assets/logos/visa.svg" alt="Visa">
+          <img class="mc" src="assets/logos/mastercard.svg" alt="Mastercard">
+        </div>
+      </div>
+    </div>
+
+    <div class="fn__faq">
+      <p class="fn__eb">Częste pytania</p>
+
+      <details class="fn__q" open>
+        <summary><span class="t"><span class="fn__d">Czy agent AI może zapłacić bez mojej zgody?</span><span class="fn__m">Czy agent AI płaci sam?</span></span><span class="fn__ic"></span></summary>
+        <p class="fn__a">Nie. Agent AI przygotowuje płatność, ale nie płaci sam: każdą płatność zatwierdza klient, a BLIK potwierdza w aplikacji banku. Limity i zgody botów w Wallecie ustawia klient.</p>
+      </details>
+
+      <details class="fn__q">
+        <summary><span class="t"><span class="fn__d">Kim jest Paymove i kto nas nadzoruje?</span><span class="fn__m">Kto nadzoruje Paymove?</span></span><span class="fn__ic"></span></summary>
+        <p class="fn__a">Jesteśmy Małą Instytucją Płatniczą wpisaną do rejestru dostawców usług płatniczych (MIP 245/2024), pod nadzorem KNF.</p>
+      </details>
+
+      <details class="fn__q">
+        <summary><span class="t"><span class="fn__d">Jakie metody płatności dostanie mój sklep?</span><span class="fn__m">Jakie metody płatności?</span></span><span class="fn__ic"></span></summary>
+        <p class="fn__a">BLIK, Apple Pay, Google Pay oraz karty Visa i Mastercard. Klient potwierdza płatność w aplikacji banku albo w portfelu, a dane karty nie przechodzą przez sklep.</p>
+      </details>
+
+      <details class="fn__q">
+        <summary><span class="t"><span class="fn__d">Czy mogę zostawić obecną bramkę płatności?</span><span class="fn__m">Czy zostawię obecną bramkę?</span></span><span class="fn__ic"></span></summary>
+        <p class="fn__a">Tak. Włączasz Paymove obok obecnej bramki i porównujesz wyniki po miesiącu. Przed startem nie musisz niczego wypowiadać.</p>
+      </details>
+    </div>
+
+  </div>
+</section>
+
+<footer id="stopka">
+  <div class="ft__in">
+    <div class="ft__top">
+      <div class="ft__brand">
+        <a class="ft__logo" href="./" aria-label="Paymove"><img src="assets/logos/logo_paymove_ink.svg" alt="Paymove"></a>
+        <p class="ft__claim">Płatności online, QR i z agentem AI.</p>
+      </div>
+
+      <div class="ft__col ft__d">
+        <p class="ft__h">Produkty</p>
+        <ul>
+          <li><a href="https://paymove.io/checkout">Checkout</a></li>
+          <li><a href="https://paymove.io/scan-and-pay">Scan&amp;Pay</a></li>
+          <li><a href="https://paymove.io/pay-and-go">Pay&amp;Go</a></li>
+          <li><a href="https://paymove.io/mobility">Mobility</a></li>
+          <li><a href="https://paymove.io/docpay">DocPay</a></li>
+        </ul>
+      </div>
+      <div class="ft__col ft__d">
+        <p class="ft__h">Dla deweloperów</p>
+        <ul>
+          <li><a href="https://docs.paymove.io">Dokumentacja</a></li>
+          <li><a href="https://docs.paymove.io/ai-agents">Agenci AI</a></li>
+        </ul>
+      </div>
+      <div class="ft__col ft__d">
+        <p class="ft__h">Firma</p>
+        <ul>
+          <li><a href="https://paymove.io/blog">Blog</a></li>
+          <li><a href="https://paymove.io/kontakt">Kontakt</a></li>
+        </ul>
+      </div>
+      <div class="ft__col ft__d">
+        <p class="ft__h">Dokumenty</p>
+        <ul>
+          <li><a href="https://paymove.io/regulamin">Regulamin usług</a></li>
+          <li><a href="https://paymove.io/regulamin-pay-and-go">Regulamin Pay&amp;Go</a></li>
+          <li><a href="https://paymove.io/regulamin-pojedynczej-transakcji">Regulamin pojedynczej transakcji płatniczej</a></li>
+          <li><a href="https://paymove.io/polityka-prywatnosci">Polityka prywatności</a></li>
+          <li><a href="https://paymove.io/polityka-cookies">Polityka cookies</a></li>
+        </ul>
+      </div>
+
+      <div class="ft__acc ft__m">
+        <details>
+          <summary>Produkty</summary>
+          <ul>
+            <li><a href="https://paymove.io/checkout">Checkout</a></li>
+            <li><a href="https://paymove.io/scan-and-pay">Scan&amp;Pay</a></li>
+            <li><a href="https://paymove.io/pay-and-go">Pay&amp;Go</a></li>
+            <li><a href="https://paymove.io/mobility">Mobility</a></li>
+            <li><a href="https://paymove.io/docpay">DocPay</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary>Dla deweloperów</summary>
+          <ul>
+            <li><a href="https://docs.paymove.io">Dokumentacja</a></li>
+            <li><a href="https://docs.paymove.io/ai-agents">Agenci AI</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary>Firma</summary>
+          <ul>
+            <li><a href="https://paymove.io/blog">Blog</a></li>
+            <li><a href="https://paymove.io/kontakt">Kontakt</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary>Dokumenty</summary>
+          <ul>
+            <li><a href="https://paymove.io/regulamin">Regulamin usług</a></li>
+            <li><a href="https://paymove.io/regulamin-pay-and-go">Regulamin Pay&amp;Go</a></li>
+            <li><a href="https://paymove.io/regulamin-pojedynczej-transakcji">Regulamin pojedynczej transakcji</a></li>
+            <li><a href="https://paymove.io/polityka-prywatnosci">Polityka prywatności</a></li>
+            <li><a href="https://paymove.io/polityka-cookies">Polityka cookies</a></li>
+          </ul>
+        </details>
+      </div>
+    </div>
+
+    <div class="ft__bot">
+      <div class="ft__legal">
+        <p><span class="ft__ln">Paymove Sp. z o.o., ul. Kujawska 28, 81-862 Sopot</span><span class="ft__sep"> · </span><span class="ft__ln">NIP 5851485649 · KRS 0000751887</span></p>
+        <p>Jesteśmy Małą Instytucją Płatniczą wpisaną do rejestru dostawców usług płatniczych (MIP 245/2024).</p>
+      </div>
+      <div class="ft__soc">
+        <a href="https://facebook.com/paymove.io" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 13.5h2.5l1-4H14v-2c0-1 0-2 2-2h1.5V2.14C17.17 2.1 15.97 2 14.7 2 12 2 10 3.66 10 6.7v2.8H7v4h3V22h4v-8.5z"/></svg></a>
+        <a href="https://linkedin.com/company/paymove" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M6.94 5a2 2 0 1 1-4-.002 2 2 0 0 1 4 .002zM7 8.48H3V21h4V8.48zm6.32 0H9.34V21h3.94v-6.57c0-3.66 4.77-4 4.77 0V21H22v-7.93c0-6.17-7.06-5.94-8.72-2.91l.04-1.68z"/></svg></a>
+        <a href="https://instagram.com/paymove.io" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.07.05 1.79.22 2.43.47a4.9 4.9 0 0 1 1.77 1.15 4.9 4.9 0 0 1 1.15 1.77c.25.64.42 1.36.47 2.43.05 1.06.06 1.4.06 4.12s-.01 3.06-.06 4.12c-.05 1.07-.22 1.79-.47 2.43a5.1 5.1 0 0 1-2.92 2.92c-.64.25-1.36.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.07-.05-1.79-.22-2.43-.47a5.1 5.1 0 0 1-2.92-2.92c-.25-.64-.42-1.36-.47-2.43C2.01 15.06 2 14.72 2 12s.01-3.06.06-4.12c.05-1.07.22-1.79.47-2.43A4.9 4.9 0 0 1 3.68 3.68 4.9 4.9 0 0 1 5.45 2.53C6.09 2.28 6.81 2.11 7.88 2.06 8.94 2.01 9.28 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm5.25-3.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z"/></svg></a>
+        <a href="https://www.youtube.com/channel/UCb3Nb8Ii6F952OT0UCi3iSw" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M21.54 6.2C22 7.98 22 12 22 12s0 4.02-.46 5.8a2.98 2.98 0 0 1-2.08 2.1C17.62 20.4 12 20.4 12 20.4s-5.62 0-7.46-.5a2.98 2.98 0 0 1-2.08-2.1C2 16.02 2 12 2 12s0-4.02.46-5.8a2.98 2.98 0 0 1 2.08-2.1C6.38 3.6 12 3.6 12 3.6s5.62 0 7.46.5a2.98 2.98 0 0 1 2.08 2.1zM10 15.5l5.2-3.5L10 8.5v7z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+<style>/* poprawki techniczne executora: #online */
+#online .on__tab .on__tw{padding-top:4px}
+#online .on__lu .on__copy span{color:#fff}
+</style>
+<style>/* poprawki techniczne executora: #agent (pozycjonowanie bez ujemnych marginesów, ten sam wygląd) */
+#agent .ag__net{margin:0;transform:translate(-50%,-50%)}
+@media (max-width:1023px){#agent .ag__net{transform:translateX(-50%)}}
+#agent .ag__scr img{margin-top:0;transform:translateY(-5.7%)}
+</style>
+
+<style>/* poprawki techniczne executora: #final (czytelniejsze logotypy metod w panelu Sandbox) */
+#final .fn__logos img{height:28px}#final .fn__logos img.mc{height:24px}
+@media (max-width:720px){#final .fn__logos img{height:24px}#final .fn__logos img.mc{height:20px}}
+</style>
+</body>
+</html>
